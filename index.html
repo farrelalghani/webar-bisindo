@@ -1,0 +1,463 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>BISINDO: Ketik Kata (A-K-U)</title>
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&family=Nunito:wght@700&display=swap" rel="stylesheet">
+    <!-- Google Fonts CSS is generated per user-agent, so it cannot carry a static SRI hash. -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet"
+          integrity="sha512-DxV+EoADokOrZgt3q8/259SEpm65T4jbIRJdlF4V1oiWJgvjSVaz4/M9G3ubZ+5nTt5KThm81aERKCN9xkeoig=="
+          crossorigin="anonymous" referrerpolicy="no-referrer">
+    <link rel="stylesheet" href="style.css">
+
+    <script type="importmap">
+        { "imports": { "three": "https://unpkg.com/three@0.160.0/build/three.module.js", "three/addons/": "https://unpkg.com/three@0.160.0/examples/jsm/" } }
+    </script>
+    <!-- three.js / mediapipe are loaded via importmap from CDN; browsers do not yet support
+         integrity= on import maps, so pinning to an exact version (already done below) is the
+         practical mitigation against unexpected upstream changes. -->
+</head>
+<body>
+
+    <div id="home-screen">
+        <div class="logo-container"><i class="fas fa-pen-nib logo-icon"></i></div>
+        <h1 class="title-main">BISINDO KATA</h1>
+        <p class="subtitle">Belajar Menulis Kata (A-K-U)</p>
+        <button class="btn-start" id="btn-start">MULAI MENULIS &#9654;</button>
+    </div>
+
+    <div id="ar-screen">
+        <div id="camera-frame">
+            <div class="back-btn" id="btn-back"><i class="fas fa-home"></i></div>
+
+            <div class="word-box-container">
+                <div class="word-box" id="word-display">_</div>
+                <div class="progress-bar" id="lock-progress"></div>
+                <div class="word-actions">
+                    <button class="action-btn" id="btn-clear"><i class="fas fa-trash"></i> Hapus</button>
+                    <button class="action-btn" id="btn-speak"><i class="fas fa-volume-up"></i> Baca</button>
+                </div>
+            </div>
+
+            <div id="loading-overlay">
+                <i class="fas fa-spinner fa-spin" style="font-size: 40px; margin-bottom: 15px;"></i>
+                <div id="loading-text">Menyiapkan AI...</div>
+            </div>
+
+            <div id="error-overlay">
+                <i class="fas fa-triangle-exclamation error-icon"></i>
+                <div class="error-message" id="error-message">Terjadi kesalahan.</div>
+                <button class="btn-retry" id="btn-retry">COBA LAGI</button>
+            </div>
+
+            <div class="result-bubble" id="res-bubble">
+                <div class="result-text" id="big-char">?</div>
+                <div class="helper-text" id="helper-text">Tahan 2 Detik...</div>
+            </div>
+
+            <video id="webcam" autoplay playsinline muted></video>
+            <canvas id="output_canvas"></canvas>
+        </div>
+    </div>
+
+    <script type="module">
+        import * as THREE from 'three';
+        import { FontLoader } from 'three/addons/loaders/FontLoader.js';
+        import { TextGeometry } from 'three/addons/geometries/TextGeometry.js';
+        import { FilesetResolver, HandLandmarker } from "https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@0.10.0";
+
+        /* ======================================================================
+         * CONSTANTS
+         * ==================================================================== */
+        // How long a hand shape must stay stable before it is "typed" (ms).
+        // Using wall-clock time (not frame count) keeps this consistent across
+        // devices with different display refresh rates.
+        const HOLD_DURATION_MS = 2000;
+        // Extra margin (in normalized landmark units) a fingertip must be farther
+        // from the wrist than its middle joint to count as "extended".
+        const EXTENSION_MARGIN = 0.02;
+        // Max thumb-index tip distance (normalized) to count as a pinch ("O").
+        const PINCH_DISTANCE_THRESHOLD = 0.06;
+        // Max distance between both index fingertips to count as the two-hand "A" shape.
+        const TWO_HAND_PROXIMITY_THRESHOLD = 0.15;
+
+        const HAND_LANDMARKER_MODEL_URL =
+            "https://storage.googleapis.com/mediapipe-models/hand_landmarker/hand_landmarker/float16/1/hand_landmarker.task";
+        const FONT_URL = 'https://unpkg.com/three@0.160.0/examples/fonts/gentilis_bold.typeface.json';
+        const TEXT_COLORS = [0xFF6347, 0x1E90FF, 0x32CD32, 0xFFD700, 0xFF69B4];
+
+        /* ======================================================================
+         * DOM CACHE
+         * ==================================================================== */
+        const dom = {};
+        function cacheDom() {
+            Object.assign(dom, {
+                homeScreen: document.getElementById('home-screen'),
+                arScreen: document.getElementById('ar-screen'),
+                btnStart: document.getElementById('btn-start'),
+                btnBack: document.getElementById('btn-back'),
+                btnClear: document.getElementById('btn-clear'),
+                btnSpeak: document.getElementById('btn-speak'),
+                btnRetry: document.getElementById('btn-retry'),
+                wordDisplay: document.getElementById('word-display'),
+                lockProgress: document.getElementById('lock-progress'),
+                loadingOverlay: document.getElementById('loading-overlay'),
+                loadingText: document.getElementById('loading-text'),
+                errorOverlay: document.getElementById('error-overlay'),
+                errorMessage: document.getElementById('error-message'),
+                resBubble: document.getElementById('res-bubble'),
+                bigChar: document.getElementById('big-char'),
+                helperText: document.getElementById('helper-text'),
+                video: document.getElementById('webcam'),
+                canvas: document.getElementById('output_canvas'),
+            });
+        }
+
+        /* ======================================================================
+         * MUTABLE STATE
+         * ==================================================================== */
+        const State = {
+            handLandmarker: null,
+            loadedFont: null,
+            scene: null,
+            camera: null,
+            renderer: null,
+            textMesh: null,
+            currentLetter: "",
+
+            mediaStream: null,
+            animationFrameId: null,
+            lastFrameTime: 0,
+
+            isModelReady: false,   // AI model + 3D scene initialized (expensive, done once)
+            isCameraRunning: false,
+
+            constructedWord: "",
+            lastDetected: "",
+            holdElapsedMs: 0,
+        };
+
+        /* ======================================================================
+         * SPEECH
+         * ==================================================================== */
+        function initAudio() {
+            const s = window.speechSynthesis;
+            s.speak(new SpeechSynthesisUtterance(""));
+        }
+        function speak(text) {
+            window.speechSynthesis.cancel();
+            const u = new SpeechSynthesisUtterance(text);
+            u.lang = 'id-ID'; u.rate = 1.0; u.pitch = 1.2;
+            window.speechSynthesis.speak(u);
+        }
+        function speakWord() {
+            speak(State.constructedWord || "Belum ada kata");
+        }
+        function clearWord() {
+            State.constructedWord = "";
+            updateWordUI();
+            speak("Hapus");
+        }
+        function updateWordUI() {
+            dom.wordDisplay.innerText = State.constructedWord || "_";
+        }
+
+        /* ======================================================================
+         * HAND-SIGN DETECTION (BISINDO: A, K, U, E, I, O)
+         * ==================================================================== */
+        function getDist(lm, i, j) {
+            return Math.hypot(lm[i].x - lm[j].x, lm[i].y - lm[j].y);
+        }
+        function isExt(lm, tip, pip) {
+            const wrist = 0;
+            return getDist(lm, wrist, tip) > getDist(lm, wrist, pip) + EXTENSION_MARGIN;
+        }
+
+        function detectLetters(lm, lm2, isDualHand) {
+            const T = isExt(lm, 8, 6);   // Telunjuk
+            const M = isExt(lm, 12, 10); // Tengah
+            const R = isExt(lm, 16, 14); // Manis
+            const K = isExt(lm, 20, 18); // Kelingking
+            const J = isExt(lm, 4, 2);   // Jempol
+            const distO = getDist(lm, 4, 8);
+
+            // 1. A (2 Tangan, ujung telunjuk berdekatan)
+            if (isDualHand && lm2) {
+                if (Math.hypot(lm[8].x - lm2[8].x, lm[8].y - lm2[8].y) < TWO_HAND_PROXIMITY_THRESHOLD) return "A";
+            }
+
+            // 2. K (Telunjuk + Tengah + Jempol Lurus) - Prioritas Tinggi
+            if (T && M && J && !R && !K) return "K";
+
+            // 3. E (Telunjuk + Tengah + Manis Lurus)
+            if (T && M && R && !K) return "E";
+
+            // 4. U (Telunjuk + Jempol Lurus)
+            if (T && J && !M && !R && !K) return "U";
+
+            // 5. I (Kelingking)
+            if (K && !T && !M && !R) return "I";
+
+            // 6. O (Cubit ibu jari-telunjuk, jari tengah & manis tidak lurus untuk
+            //    mengurangi false-positive saat pinch tidak disengaja)
+            if (distO < PINCH_DISTANCE_THRESHOLD && !M && !R) return "O";
+
+            return "";
+        }
+
+        /* ======================================================================
+         * HOLD-TO-TYPE SYSTEM
+         * ==================================================================== */
+        function handleTyping(char, deltaTimeMs) {
+            if (char !== "" && char === State.lastDetected) {
+                State.holdElapsedMs += deltaTimeMs;
+                const progress = Math.min((State.holdElapsedMs / HOLD_DURATION_MS) * 100, 100);
+                dom.lockProgress.style.width = progress + "%";
+
+                if (State.holdElapsedMs >= HOLD_DURATION_MS) {
+                    // Huruf terkunci - tambahkan ke kata dan reset supaya tidak
+                    // langsung terkunci lagi di frame berikutnya.
+                    State.constructedWord += char;
+                    updateWordUI();
+                    speak(char);
+
+                    dom.lockProgress.style.background = "#FFD700";
+                    setTimeout(() => dom.lockProgress.style.background = "#32CD32", 200);
+
+                    State.holdElapsedMs = 0;
+                    State.lastDetected = "";
+                }
+            } else {
+                State.holdElapsedMs = 0;
+                dom.lockProgress.style.width = "0%";
+                State.lastDetected = char;
+            }
+        }
+
+        /* ======================================================================
+         * 3D SCENE
+         * ==================================================================== */
+        const textMaterial = new THREE.MeshPhysicalMaterial({ color: 0xFFA500, metalness: 0.1, roughness: 0.2, clearcoat: 1.0 });
+
+        function buildScene() {
+            State.scene = new THREE.Scene();
+            State.scene.add(new THREE.AmbientLight(0xffffff, 0.9));
+            const dirLight = new THREE.DirectionalLight(0xffd700, 0.5);
+            dirLight.position.set(5, 10, 7);
+            State.scene.add(dirLight);
+
+            State.camera = new THREE.PerspectiveCamera(50, window.innerWidth / window.innerHeight, 0.1, 100);
+            State.camera.position.z = 15;
+
+            State.renderer = new THREE.WebGLRenderer({ canvas: dom.canvas, alpha: true, antialias: true });
+            State.renderer.setSize(window.innerWidth, window.innerHeight);
+            State.renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+        }
+
+        function disposeTextMesh() {
+            if (!State.textMesh) return;
+            State.scene.remove(State.textMesh);
+            State.textMesh.geometry.dispose();
+            State.textMesh = null;
+        }
+
+        function updateDisplay(char, handPos) {
+            if (char !== State.currentLetter && char !== "") {
+                disposeTextMesh();
+
+                const geometry = new TextGeometry(char, {
+                    font: State.loadedFont, size: 2.5, height: 0.5,
+                    curveSegments: 10, bevelEnabled: true, bevelThickness: 0.1, bevelSize: 0.05
+                });
+                geometry.center();
+                textMaterial.color.setHex(TEXT_COLORS[Math.floor(Math.random() * TEXT_COLORS.length)]);
+                State.textMesh = new THREE.Mesh(geometry, textMaterial);
+                State.scene.add(State.textMesh);
+
+                dom.resBubble.style.transform = "translateX(-50%) scale(1.3)";
+                setTimeout(() => dom.resBubble.style.transform = "translateX(-50%) scale(1)", 200);
+            }
+            if (char === "") {
+                disposeTextMesh();
+            }
+            State.currentLetter = char;
+
+            if (State.textMesh) {
+                const targetVec = new THREE.Vector3((handPos.x - 0.5) * 15, -(handPos.y - 0.5) * 10 + 2, 0);
+                State.textMesh.position.lerp(targetVec, 0.1);
+                State.textMesh.rotation.y += 0.02;
+            }
+
+            dom.bigChar.innerText = char || "?";
+            dom.helperText.innerText = char ? "Tahan untuk Ketik..." : "Cari Huruf...";
+        }
+
+        /* ======================================================================
+         * AR LIFECYCLE (model load is expensive & done once; camera can be
+         * stopped/started repeatedly without reloading the model)
+         * ==================================================================== */
+        function showLoading(text) {
+            dom.errorOverlay.style.display = 'none';
+            dom.loadingText.innerText = text;
+            dom.loadingOverlay.style.display = 'flex';
+        }
+        function hideLoading() {
+            dom.loadingOverlay.style.display = 'none';
+        }
+        function showError(message, retryAction) {
+            dom.loadingOverlay.style.display = 'none';
+            dom.errorMessage.innerText = message;
+            dom.errorOverlay.style.display = 'flex';
+            dom.btnRetry.onclick = () => {
+                dom.errorOverlay.style.display = 'none';
+                retryAction();
+            };
+        }
+
+        async function ensureModelReady() {
+            if (State.isModelReady) return true;
+            showLoading("Memuat model AI...");
+            try {
+                buildScene();
+
+                const fontPromise = new Promise((resolve, reject) => {
+                    new FontLoader().load(FONT_URL, resolve, undefined, reject);
+                });
+                const visionPromise = FilesetResolver.forVisionTasks(
+                    "https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@0.10.0/wasm"
+                );
+
+                const [font, vision] = await Promise.all([fontPromise, visionPromise]);
+                State.loadedFont = font;
+
+                State.handLandmarker = await HandLandmarker.createFromOptions(vision, {
+                    baseOptions: { modelAssetPath: HAND_LANDMARKER_MODEL_URL, delegate: "GPU" },
+                    runningMode: "VIDEO", numHands: 2,
+                    minHandDetectionConfidence: 0.6, minHandPresenceConfidence: 0.6, minTrackingConfidence: 0.6
+                });
+
+                State.isModelReady = true;
+                return true;
+            } catch (err) {
+                console.error("Gagal memuat model AI:", err);
+                showError(
+                    "Gagal memuat model AI. Periksa koneksi internet Anda lalu coba lagi.",
+                    () => startApp()
+                );
+                return false;
+            }
+        }
+
+        function cameraErrorMessage(err) {
+            if (err && (err.name === "NotAllowedError" || err.name === "PermissionDeniedError")) {
+                return "Izin kamera ditolak. Aktifkan izin kamera untuk browser ini, lalu coba lagi.";
+            }
+            if (err && (err.name === "NotFoundError" || err.name === "DevicesNotFoundError")) {
+                return "Kamera tidak ditemukan pada perangkat ini.";
+            }
+            return "Tidak dapat mengakses kamera. Coba lagi.";
+        }
+
+        async function startCamera() {
+            showLoading("Mengakses kamera...");
+            try {
+                State.mediaStream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: "user" } });
+            } catch (err) {
+                console.error("Gagal mengakses kamera:", err);
+                showError(cameraErrorMessage(err), () => startCamera());
+                return;
+            }
+
+            dom.video.srcObject = State.mediaStream;
+            dom.video.addEventListener("loadeddata", () => {
+                hideLoading();
+                State.isCameraRunning = true;
+                State.lastFrameTime = performance.now();
+                loop();
+            }, { once: true });
+        }
+
+        function stopCamera() {
+            State.isCameraRunning = false;
+            if (State.animationFrameId !== null) {
+                cancelAnimationFrame(State.animationFrameId);
+                State.animationFrameId = null;
+            }
+            if (State.mediaStream) {
+                State.mediaStream.getTracks().forEach(track => track.stop());
+                State.mediaStream = null;
+            }
+            dom.video.srcObject = null;
+        }
+
+        /* ======================================================================
+         * MAIN LOOP
+         * ==================================================================== */
+        function loop() {
+            if (!State.isCameraRunning) return;
+
+            const width = window.innerWidth, height = window.innerHeight;
+            if (dom.canvas.width !== width) {
+                State.renderer.setSize(width, height);
+                State.camera.aspect = width / height;
+                State.camera.updateProjectionMatrix();
+            }
+
+            const now = performance.now();
+            const deltaTimeMs = now - State.lastFrameTime;
+            State.lastFrameTime = now;
+
+            if (State.handLandmarker && dom.video.currentTime > 0) {
+                const results = State.handLandmarker.detectForVideo(dom.video, now);
+                let detected = "";
+                let handPos = { x: 0.5, y: 0.5 };
+
+                if (results.landmarks.length > 0) {
+                    const lm = results.landmarks[0];
+                    const lm2 = results.landmarks.length > 1 ? results.landmarks[1] : null;
+                    const isDualHand = results.landmarks.length > 1;
+
+                    handPos = lm[9];
+                    detected = detectLetters(lm, lm2, isDualHand);
+                }
+
+                handleTyping(detected, deltaTimeMs);
+                updateDisplay(detected, handPos);
+            }
+
+            State.renderer.render(State.scene, State.camera);
+            State.animationFrameId = requestAnimationFrame(loop);
+        }
+
+        /* ======================================================================
+         * NAVIGATION / UI WIRING
+         * ==================================================================== */
+        async function startApp() {
+            initAudio();
+            dom.homeScreen.style.transform = "translateY(-100%)";
+            dom.arScreen.style.display = 'block';
+            speak("Ayo tulis kata A KU");
+
+            const ready = await ensureModelReady();
+            if (ready) await startCamera();
+        }
+
+        function backToHome() {
+            dom.homeScreen.style.transform = "translateY(0%)";
+            stopCamera();
+            setTimeout(() => dom.arScreen.style.display = 'none', 500);
+        }
+
+        function initUI() {
+            cacheDom();
+            dom.btnStart.addEventListener('click', startApp);
+            dom.btnBack.addEventListener('click', backToHome);
+            dom.btnClear.addEventListener('click', clearWord);
+            dom.btnSpeak.addEventListener('click', speakWord);
+        }
+
+        document.addEventListener('DOMContentLoaded', initUI);
+    </script>
+</body>
+</html>
