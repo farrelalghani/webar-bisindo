@@ -37,5 +37,5 @@ Aplikasi Web-based Augmented Reality & Computer Vision modern untuk pembelajaran
 
 ---
 
-Dikembangkan oleh **Farrel Muhammad Alghani**  
+Dikembangkan oleh **Farrel Muhammad Alghani** & **Rifasha Hadiarto**  
 Mata Kuliah: *Realitas Maya dan Berimbuh (Semester 7)*
