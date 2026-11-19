@@ -2,65 +2,404 @@
 <html lang="id">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>BISINDO: Ketik Kata (A-K-U)</title>
-    <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&family=Nunito:wght@700&display=swap" rel="stylesheet">
-    <!-- Google Fonts CSS is generated per user-agent, so it cannot carry a static SRI hash. -->
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet"
-          integrity="sha512-DxV+EoADokOrZgt3q8/259SEpm65T4jbIRJdlF4V1oiWJgvjSVaz4/M9G3ubZ+5nTt5KThm81aERKCN9xkeoig=="
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>WebAR BISINDO: Belajar Abjad Jari & Kata (A - Z)</title>
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,400..700;1,9..40,400..700&family=Manrope:wght@600;700;800&family=Fredoka+One&display=swap" rel="stylesheet">
+    
+    <!-- Font Awesome Icons -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet"
           crossorigin="anonymous" referrerpolicy="no-referrer">
+
+    <!-- Tailwind CSS (CDN for zero-build portability) -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        darkBg: '#111512',
+                        darkCard: '#18231b',
+                        limeAccent: '#d7ff69',
+                        limeHover: '#c9f050',
+                        brandGreen: '#315826',
+                        brandLightGreen: '#e5f5d9',
+                        accentGreen: '#62a84d'
+                    },
+                    fontFamily: {
+                        sans: ['"DM Sans"', 'sans-serif'],
+                        heading: ['"Manrope"', 'sans-serif'],
+                        fredoka: ['"Fredoka One"', 'cursive']
+                    }
+                }
+            }
+        }
+    </script>
+
+    <!-- Custom Style Sheet -->
     <link rel="stylesheet" href="style.css">
 
+    <!-- Three.js Import Map -->
     <script type="importmap">
-        { "imports": { "three": "https://unpkg.com/three@0.160.0/build/three.module.js", "three/addons/": "https://unpkg.com/three@0.160.0/examples/jsm/" } }
+        { 
+            "imports": { 
+                "three": "https://unpkg.com/three@0.160.0/build/three.module.js", 
+                "three/addons/": "https://unpkg.com/three@0.160.0/examples/jsm/" 
+            } 
+        }
     </script>
-    <!-- three.js / mediapipe are loaded via importmap from CDN; browsers do not yet support
-         integrity= on import maps, so pinning to an exact version (already done below) is the
-         practical mitigation against unexpected upstream changes. -->
 </head>
-<body>
+<body class="bg-[#111512] text-white select-none overflow-hidden h-[100dvh]">
 
-    <div id="home-screen">
-        <div class="logo-container"><i class="fas fa-pen-nib logo-icon"></i></div>
-        <h1 class="title-main">BISINDO KATA</h1>
-        <p class="subtitle">Belajar Menulis Kata (A-K-U)</p>
-        <button class="btn-start" id="btn-start">MULAI MENULIS &#9654;</button>
-    </div>
-
-    <div id="ar-screen">
-        <div id="camera-frame">
-            <div class="back-btn" id="btn-back"><i class="fas fa-home"></i></div>
-
-            <div class="word-box-container">
-                <div class="word-box" id="word-display">_</div>
-                <div class="progress-bar" id="lock-progress"></div>
-                <div class="word-actions">
-                    <button class="action-btn" id="btn-clear"><i class="fas fa-trash"></i> Hapus</button>
-                    <button class="action-btn" id="btn-speak"><i class="fas fa-volume-up"></i> Baca</button>
+    <!-- ======================================================================
+         1. HOME SCREEN / LANDING
+         ====================================================================== -->
+    <div id="home-screen" class="fixed inset-0 z-50 flex flex-col justify-between p-6 sm:p-10 bg-gradient-to-br from-[#0c120e] via-[#111813] to-[#1c291d] overflow-y-auto screen-transition">
+        <!-- Top Navbar -->
+        <header class="w-full max-w-5xl mx-auto flex items-center justify-between">
+            <div class="flex items-center gap-3">
+                <div class="size-11 rounded-2xl bg-gradient-to-tr from-[#315826] to-[#d7ff69] p-0.5 shadow-lg shadow-limeAccent/10">
+                    <div class="size-full bg-[#18231b] rounded-[14px] flex items-center justify-center text-limeAccent font-black text-xl">
+                        B
+                    </div>
+                </div>
+                <div>
+                    <h1 class="text-lg sm:text-xl font-bold tracking-tight text-white flex items-center gap-2">
+                        BISINDO <span class="text-limeAccent font-normal text-xs px-2 py-0.5 rounded-full bg-limeAccent/10 border border-limeAccent/30">WebAR</span>
+                    </h1>
+                    <p class="text-[11px] text-gray-400">Bahasa Isyarat Indonesia Real-time</p>
                 </div>
             </div>
 
-            <div id="loading-overlay">
-                <i class="fas fa-spinner fa-spin" style="font-size: 40px; margin-bottom: 15px;"></i>
-                <div id="loading-text">Menyiapkan AI...</div>
+            <button id="btn-open-dict-home" class="glass-btn px-4 py-2 text-xs font-semibold gap-2 border border-white/20">
+                <i class="fas fa-book-open text-limeAccent"></i>
+                <span class="hidden sm:inline">Kamus Abjad (A - Z)</span>
+            </button>
+        </header>
+
+        <!-- Hero Content -->
+        <main class="w-full max-w-4xl mx-auto my-auto py-8 text-center flex flex-col items-center">
+            <!-- Animated Badge -->
+            <div class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-[#18231b]/80 border border-limeAccent/30 text-limeAccent text-xs font-bold mb-6 shadow-sm">
+                <span class="size-2 rounded-full bg-[#62a84d] animate-ping"></span>
+                <span>AI Vision & 3D AR Interaktif</span>
             </div>
 
-            <div id="error-overlay">
-                <i class="fas fa-triangle-exclamation error-icon"></i>
-                <div class="error-message" id="error-message">Terjadi kesalahan.</div>
-                <button class="btn-retry" id="btn-retry">COBA LAGI</button>
+            <h2 class="text-3xl sm:text-5xl md:text-6xl font-extrabold tracking-tight text-white leading-tight mb-4">
+                Belajar Eja Kata BISINDO <br class="hidden sm:block"/>
+                <span class="text-transparent bg-clip-text bg-gradient-to-r from-limeAccent via-[#a8ff35] to-[#4ade80]">
+                    Langsung Lewat Kamera Web
+                </span>
+            </h2>
+
+            <p class="text-sm sm:text-base text-gray-300 max-w-2xl mb-8 leading-relaxed">
+                Tulis kata dengan membentuk abjad jari Bahasa Isyarat Indonesia (BISINDO) dari <strong class="text-white">A sampai Z</strong>. Didukung deteksi satu dan dua tangan, visualisasi 3D, serta pelafalan audio otomatis.
+            </p>
+
+            <!-- Actions -->
+            <div class="flex flex-col sm:flex-row items-center gap-4 w-full sm:w-auto">
+                <button id="btn-start" class="w-full sm:w-auto flex items-center justify-center gap-3 px-8 py-4 rounded-2xl bg-limeAccent hover:bg-limeHover text-[#172019] font-bold text-base shadow-xl shadow-limeAccent/20 transition-all hover:scale-[1.02] active:scale-95">
+                    <i class="fas fa-camera text-lg"></i>
+                    <span>MULAI MENULIS SEKARANG</span>
+                    <i class="fas fa-arrow-right text-sm"></i>
+                </button>
+                <button id="btn-guide-modal" class="w-full sm:w-auto flex items-center justify-center gap-2 px-6 py-4 rounded-2xl glass-panel-dark text-white font-medium text-sm hover:bg-white/10 transition border border-white/20">
+                    <i class="fas fa-hand text-limeAccent"></i>
+                    <span>Panduan Gestur A - Z</span>
+                </button>
             </div>
 
-            <div class="result-bubble" id="res-bubble">
-                <div class="result-text" id="big-char">?</div>
-                <div class="helper-text" id="helper-text">Tahan 2 Detik...</div>
+            <!-- Features Grid -->
+            <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 w-full mt-12 text-left">
+                <div class="p-4 rounded-2xl bg-white/5 border border-white/10 backdrop-blur-sm">
+                    <div class="size-9 rounded-xl bg-limeAccent/15 text-limeAccent grid place-items-center mb-3 text-sm">
+                        <i class="fas fa-hands"></i>
+                    </div>
+                    <h3 class="text-sm font-bold text-white mb-1">Abjad Lengkap A - Z</h3>
+                    <p class="text-xs text-gray-400">Mendukung pose isyarat dua tangan khas BISINDO dan satu tangan standar.</p>
+                </div>
+                <div class="p-4 rounded-2xl bg-white/5 border border-white/10 backdrop-blur-sm">
+                    <div class="size-9 rounded-xl bg-limeAccent/15 text-limeAccent grid place-items-center mb-3 text-sm">
+                        <i class="fas fa-cube"></i>
+                    </div>
+                    <h3 class="text-sm font-bold text-white mb-1">Visualisasi Huruf 3D</h3>
+                    <p class="text-xs text-gray-400">Three.js merender huruf 3D melayang yang bergerak mengikuti posisi telapak tangan Anda.</p>
+                </div>
+                <div class="p-4 rounded-2xl bg-white/5 border border-white/10 backdrop-blur-sm">
+                    <div class="size-9 rounded-xl bg-limeAccent/15 text-limeAccent grid place-items-center mb-3 text-sm">
+                        <i class="fas fa-volume-high"></i>
+                    </div>
+                    <h3 class="text-sm font-bold text-white mb-1">Text-to-Speech (TTS)</h3>
+                    <p class="text-xs text-gray-400">Kata yang berhasil Anda rangkai dapat dibacakan secara otomatis dalam Bahasa Indonesia.</p>
+                </div>
+            </div>
+        </main>
+
+        <!-- Footer -->
+        <footer class="w-full max-w-5xl mx-auto flex flex-col sm:flex-row items-center justify-between text-xs text-gray-500 gap-2 border-t border-white/10 pt-4">
+            <p>Realitas Maya & Berimbuh &bull; WebAR BISINDO</p>
+            <p>Dikembangkan oleh <span class="text-gray-300 font-semibold">Farrel Muhammad Alghani</span></p>
+        </footer>
+    </div>
+
+    <!-- ======================================================================
+         2. AR CAMERA VIEWFINDER & HUD
+         ====================================================================== -->
+    <div id="ar-screen" class="hidden fixed inset-0 z-10 w-full h-[100dvh] bg-[#0c120e] overflow-hidden">
+        
+        <!-- Responsive Container for Mobile & Desktop -->
+        <div class="relative w-full h-full lg:max-w-[1560px] lg:h-[calc(100dvh-28px)] lg:my-3.5 lg:mx-auto lg:rounded-[36px] overflow-hidden shadow-2xl lg:ring-1 lg:ring-white/20 bg-black">
+            
+            <!-- Video and Three.js AR Canvas Layers -->
+            <video id="webcam" autoplay playsinline muted class="absolute inset-0 size-full object-cover z-0"></video>
+            <canvas id="output_canvas" class="absolute inset-0 size-full z-10 pointer-events-none"></canvas>
+
+            <!-- Vignette & Camera Ambient Shading Overlay -->
+            <div class="absolute inset-0 pointer-events-none bg-[linear-gradient(to_bottom,rgba(10,18,12,0.48)_0%,transparent_25%,transparent_65%,rgba(8,14,10,0.85)_100%)] z-10"></div>
+
+            <!-- ================= TOP HUD: WORD CONSTRUCTOR ================= -->
+            <header class="absolute inset-x-0 top-0 z-20 px-3 sm:px-6 pt-[max(16px,env(safe-area-inset-top))] flex justify-center pointer-events-none">
+                <div class="w-full max-w-2xl pointer-events-auto rounded-[24px] sm:rounded-[28px] border border-white/40 bg-white/90 p-3 sm:p-4 text-[#172019] shadow-[0_18px_50px_rgba(0,0,0,0.35)] backdrop-blur-2xl transition-all">
+                    
+                    <!-- Header Meta Row -->
+                    <div class="flex items-center justify-between mb-2 sm:mb-2.5">
+                        <div class="flex items-center gap-2">
+                            <button id="btn-back" class="size-8 rounded-full bg-[#18231b]/10 hover:bg-[#18231b]/20 flex items-center justify-center text-[#18231b] transition active:scale-90" title="Kembali ke Beranda">
+                                <i class="fas fa-arrow-left text-xs"></i>
+                            </button>
+                            <div>
+                                <p class="text-[9px] sm:text-[10px] font-bold uppercase tracking-[.18em] text-[#6c776e]">
+                                    Kata Terbentuk
+                                </p>
+                                <p class="text-xs sm:text-sm font-bold text-[#172019]">Terjemahan Langsung</p>
+                            </div>
+                        </div>
+
+                        <div class="flex items-center gap-2">
+                            <span class="inline-flex items-center gap-1.5 rounded-full bg-[#e5f5d9] px-2.5 py-1 text-[10px] font-bold text-[#315826] border border-[#62a84d]/30">
+                                <span class="size-1.5 animate-pulse rounded-full bg-[#62a84d]"></span> AKTIF
+                            </span>
+                            <button id="btn-open-settings" class="size-8 rounded-full bg-[#18231b]/10 hover:bg-[#18231b]/20 flex items-center justify-center text-[#18231b] transition active:scale-90" title="Pengaturan">
+                                <i class="fas fa-sliders text-xs"></i>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Word Chips & Quick Actions -->
+                    <div class="flex items-center justify-between gap-2">
+                        <!-- Letter Chips Box -->
+                        <div id="word-chips-container" class="flex min-w-0 flex-1 items-center gap-1.5 overflow-x-auto py-1 custom-scrollbar">
+                            <div id="empty-word-placeholder" class="text-xs sm:text-sm text-[#768078] italic pl-1 flex items-center gap-1.5">
+                                <i class="fas fa-hand-pointer text-xs opacity-60"></i>
+                                <span>Arahkan gestur tangan ke kamera...</span>
+                            </div>
+                        </div>
+
+                        <!-- Action Buttons -->
+                        <div class="flex items-center gap-1.5 shrink-0">
+                            <button id="btn-clear-char" type="button" class="grid size-9 place-items-center rounded-xl bg-[#edf0ed] text-[#4f5a51] hover:bg-[#e1e6e1] transition active:scale-90" title="Hapus huruf terakhir">
+                                <i class="fas fa-delete-left text-xs"></i>
+                            </button>
+                            <button id="btn-clear-all" type="button" class="grid size-9 place-items-center rounded-xl bg-[#edf0ed] text-[#4f5a51] hover:bg-[#fee2e2] hover:text-red-600 transition active:scale-90" title="Hapus semua kata">
+                                <i class="fas fa-trash text-xs"></i>
+                            </button>
+                            <button id="btn-speak-word" type="button" class="flex h-9 items-center gap-1.5 rounded-xl bg-[#d7ff69] px-3.5 text-xs font-bold text-[#203015] hover:bg-[#c9f050] transition active:scale-95 shadow-sm">
+                                <i class="fas fa-volume-high text-xs"></i>
+                                <span class="hidden sm:inline">Dengarkan</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </header>
+
+            <!-- ================= CENTER AR HUD: HOLD-TO-TYPE GAUGE ================= -->
+            <div id="hold-gauge-container" class="pointer-events-none absolute inset-x-0 top-[26%] sm:top-[28%] z-15 flex justify-center">
+                <div class="relative size-32 sm:size-36 transition-opacity duration-300">
+                    <svg class="size-full -rotate-90 drop-shadow-[0_0_18px_rgba(215,255,105,0.7)]" viewBox="0 0 144 144">
+                        <circle cx="72" cy="72" r="61" fill="rgba(18, 27, 20, 0.45)" stroke="rgba(255, 255, 255, 0.2)" stroke-width="7" />
+                        <circle id="gauge-circle-progress" cx="72" cy="72" r="61" fill="none" stroke="#d7ff69" stroke-width="7" stroke-linecap="round" stroke-dasharray="383" stroke-dashoffset="383" class="transition-all duration-75" />
+                    </svg>
+                    <div class="absolute inset-0 grid place-items-center text-center">
+                        <div>
+                            <span id="gauge-percent-text" class="mx-auto mb-1 block w-fit rounded-full bg-[#d7ff69] px-2 py-0.5 text-[10px] sm:text-[11px] font-black text-[#23301e]">
+                                0%
+                            </span>
+                            <p class="text-[12px] sm:text-[13px] font-bold leading-tight text-white drop-shadow-md">
+                                <span id="gauge-action-text">Tahan 2 Detik</span><br/>
+                                <span class="font-normal text-white/80 text-[11px]">untuk mengetik</span>
+                            </p>
+                        </div>
+                    </div>
+                </div>
             </div>
 
-            <video id="webcam" autoplay playsinline muted></video>
-            <canvas id="output_canvas"></canvas>
+            <!-- ================= FLOATING AR LETTER BADGE ================= -->
+            <div id="ar-detected-badge" class="ar-badge absolute right-4 sm:right-10 top-[44%] sm:top-[42%] z-20 grid size-[72px] sm:size-[84px] place-items-center rounded-[24px] border border-[#e5ff9c]/70 bg-[#d7ff69]/95 text-[#1c281e] shadow-[0_20px_45px_rgba(0,0,0,0.45)] backdrop-blur-md">
+                <span class="text-[9px] sm:text-[10px] font-extrabold uppercase tracking-[.18em] opacity-60">HURUF</span>
+                <strong id="badge-letter-char" class="-mt-1.5 text-3xl sm:text-4xl font-black leading-none">?</strong>
+                <span class="pulse-dot absolute -left-2 -top-2 size-4 rounded-full border-[3px] border-white bg-[#62a84d] shadow-[0_0_0_4px_rgba(215,255,105,0.3)]"></span>
+            </div>
+
+            <!-- ================= QUICK CONTROLS (BOTTOM-LEFT / BOTTOM-RIGHT) ================= -->
+            <div class="absolute inset-x-0 bottom-[145px] sm:bottom-[155px] z-20 flex items-end justify-between px-4 sm:px-8 pointer-events-none">
+                <div class="flex gap-2 pointer-events-auto">
+                    <button id="btn-hud-home" class="glass-btn size-11" title="Kembali">
+                        <i class="fas fa-home text-sm"></i>
+                    </button>
+                    <button id="btn-open-dict" class="glass-btn size-11" title="Buka Kamus BISINDO A - Z">
+                        <i class="fas fa-book text-sm text-limeAccent"></i>
+                    </button>
+                    <button id="btn-toggle-tts" class="glass-btn size-11" title="Suara Otomatis">
+                        <i id="tts-icon" class="fas fa-volume-high text-sm"></i>
+                    </button>
+                </div>
+
+                <div class="flex gap-2 pointer-events-auto">
+                    <button id="btn-switch-camera" class="glass-btn size-11" title="Ganti Kamera">
+                        <i class="fas fa-camera-rotate text-sm"></i>
+                    </button>
+                    <button id="btn-toggle-fullscreen" class="glass-btn size-11 hidden sm:inline-flex" title="Layar Penuh">
+                        <i class="fas fa-expand text-sm"></i>
+                    </button>
+                </div>
+            </div>
+
+            <!-- ================= BOTTOM DRAWER: BISINDO QUICK ALPHABET CARDS ================= -->
+            <section class="absolute inset-x-0 bottom-0 z-20 rounded-t-[30px] sm:rounded-t-[36px] border-t border-white/60 bg-[#f7f8f4]/95 pb-[max(12px,env(safe-area-inset-bottom))] pt-2 text-[#172019] shadow-[0_-20px_50px_rgba(0,0,0,0.3)] backdrop-blur-2xl">
+                <!-- Drawer Pull Handle -->
+                <div class="mx-auto mb-2 h-1 w-10 rounded-full bg-[#c7cdc7]"></div>
+                
+                <div class="flex items-center justify-between px-4 sm:px-6 mb-2">
+                    <div>
+                        <p class="text-[9px] sm:text-[10px] font-black uppercase tracking-[.2em] text-[#78817a]">
+                            Panduan Cepat
+                        </p>
+                        <h2 class="text-sm sm:text-base font-bold text-[#172019]">Alfabet Jari BISINDO (A - Z)</h2>
+                    </div>
+                    <button id="btn-drawer-see-all" class="flex items-center gap-1.5 text-xs font-bold text-[#315826] hover:text-black transition">
+                        <span>Buka Kamus Lengkap</span>
+                        <i class="fas fa-arrow-up-right-from-square text-[10px]"></i>
+                    </button>
+                </div>
+
+                <!-- Carousel Cards -->
+                <div id="quick-alphabet-carousel" class="no-scrollbar flex snap-x gap-2.5 overflow-x-auto px-4 sm:px-6 pb-2">
+                    <!-- Populated dynamically via JS for all letters A to Z -->
+                </div>
+            </section>
         </div>
     </div>
 
+    <!-- ======================================================================
+         3. MODAL: KAMUS LENGKAP BISINDO A - Z
+         ====================================================================== -->
+    <div id="dict-modal" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6 modal-backdrop screen-transition">
+        <div class="w-full max-w-4xl max-h-[90vh] bg-[#162018] border border-white/20 rounded-[32px] p-5 sm:p-8 flex flex-col shadow-2xl backdrop-blur-2xl overflow-hidden">
+            
+            <!-- Modal Header -->
+            <div class="flex items-center justify-between pb-4 border-b border-white/10 shrink-0">
+                <div class="flex items-center gap-3">
+                    <div class="size-10 rounded-xl bg-limeAccent/15 text-limeAccent grid place-items-center text-lg">
+                        <i class="fas fa-book-bookmark"></i>
+                    </div>
+                    <div>
+                        <h3 class="text-lg sm:text-xl font-bold text-white">Kamus Abjad Jari BISINDO (A - Z)</h3>
+                        <p class="text-xs text-gray-400">Panduan gerakan tangan resmi Bahasa Isyarat Indonesia</p>
+                    </div>
+                </div>
+                <button id="btn-close-dict" class="size-9 rounded-full bg-white/10 hover:bg-white/20 text-white flex items-center justify-center transition active:scale-90">
+                    <i class="fas fa-xmark text-sm"></i>
+                </button>
+            </div>
+
+            <!-- Filter Categories -->
+            <div class="flex flex-wrap items-center gap-2 py-4 border-b border-white/10 shrink-0">
+                <button class="dict-filter-btn px-3.5 py-1.5 rounded-full text-xs font-bold bg-limeAccent text-[#172019]" data-filter="all">Semua (26)</button>
+                <button class="dict-filter-btn px-3.5 py-1.5 rounded-full text-xs font-bold bg-white/10 text-white hover:bg-white/20" data-filter="vowel">Vokal (A, E, I, O, U)</button>
+                <button class="dict-filter-btn px-3.5 py-1.5 rounded-full text-xs font-bold bg-white/10 text-white hover:bg-white/20" data-filter="one-hand">Satu Tangan</button>
+                <button class="dict-filter-btn px-3.5 py-1.5 rounded-full text-xs font-bold bg-white/10 text-white hover:bg-white/20" data-filter="two-hand">Dua Tangan</button>
+            </div>
+
+            <!-- Cards Grid -->
+            <div id="dict-cards-grid" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3.5 overflow-y-auto pt-4 pr-1 custom-scrollbar flex-1">
+                <!-- Dynamically populated with all A-Z entries -->
+            </div>
+        </div>
+    </div>
+
+    <!-- ======================================================================
+         4. MODAL: PENGATURAN / SETTINGS
+         ====================================================================== -->
+    <div id="settings-modal" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4 modal-backdrop">
+        <div class="w-full max-w-md bg-[#162018] border border-white/20 rounded-[28px] p-6 shadow-2xl backdrop-blur-2xl">
+            <div class="flex items-center justify-between pb-3 border-b border-white/10 mb-4">
+                <h3 class="text-base font-bold text-white flex items-center gap-2">
+                    <i class="fas fa-sliders text-limeAccent"></i> Pengaturan
+                </h3>
+                <button id="btn-close-settings" class="size-8 rounded-full bg-white/10 hover:bg-white/20 text-white flex items-center justify-center">
+                    <i class="fas fa-xmark text-xs"></i>
+                </button>
+            </div>
+
+            <div class="space-y-4 text-xs">
+                <div>
+                    <label class="block font-semibold text-gray-300 mb-1">Durasi Menahan Huruf (Hold Duration)</label>
+                    <div class="flex items-center gap-3">
+                        <input id="input-hold-duration" type="range" min="1.0" max="3.0" step="0.25" value="2.0" class="flex-1 accent-limeAccent">
+                        <span id="label-hold-duration" class="font-bold text-limeAccent text-sm w-12 text-right">2.0s</span>
+                    </div>
+                    <p class="text-[10px] text-gray-500 mt-0.5">Waktu stabilisasi gestur sebelum huruf dimasukkan ke kata.</p>
+                </div>
+
+                <div class="pt-2 border-t border-white/10">
+                    <label class="flex items-center justify-between cursor-pointer py-1">
+                        <span class="text-gray-300 font-semibold">Tampilkan Objek Teks 3D</span>
+                        <input id="toggle-3d-text" type="checkbox" checked class="size-4 accent-limeAccent">
+                    </label>
+                    <p class="text-[10px] text-gray-500">Render huruf 3D mengambang di atas telapak tangan via Three.js.</p>
+                </div>
+
+                <div class="pt-2 border-t border-white/10">
+                    <label class="flex items-center justify-between cursor-pointer py-1">
+                        <span class="text-gray-300 font-semibold">Suara Huruf Otomatis (TTS)</span>
+                        <input id="toggle-tts-speech" type="checkbox" checked class="size-4 accent-limeAccent">
+                    </label>
+                    <p class="text-[10px] text-gray-500">Ucapkan huruf menggunakan Web Speech API saat berhasil diketik.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ======================================================================
+         5. OVERLAYS: LOADING & CAMERA ERROR
+         ====================================================================== -->
+    <div id="loading-overlay" class="hidden fixed inset-0 z-50 flex flex-col items-center justify-center bg-[#111512]/95 backdrop-blur-xl text-center p-6">
+        <div class="size-16 rounded-3xl bg-[#18231b] border border-limeAccent/30 flex items-center justify-center text-limeAccent text-2xl shadow-xl shadow-limeAccent/10 mb-4 animate-spin">
+            <i class="fas fa-spinner"></i>
+        </div>
+        <h4 id="loading-title" class="text-lg font-bold text-white mb-1">Menyiapkan AI Vision...</h4>
+        <p id="loading-subtitle" class="text-xs text-gray-400 max-w-xs">Memuat modul MediaPipe Hand Landmarker dan aset 3D...</p>
+    </div>
+
+    <div id="error-overlay" class="hidden fixed inset-0 z-50 flex flex-col items-center justify-center bg-[#181111]/95 backdrop-blur-xl text-center p-6">
+        <div class="size-16 rounded-full bg-red-500/10 border border-red-500/30 text-red-400 flex items-center justify-center text-2xl mb-4">
+            <i class="fas fa-triangle-exclamation"></i>
+        </div>
+        <h4 class="text-lg font-bold text-white mb-2">Akses Kamera Ditolak / Gagal</h4>
+        <p id="error-message-text" class="text-xs text-gray-300 max-w-sm mb-6 leading-relaxed">
+            Pastikan Anda mengizinkan akses kamera pada peramban web untuk menggunakan fitur pengenalan bahasa isyarat.
+        </p>
+        <button id="btn-retry-camera" class="px-6 py-3 rounded-2xl bg-limeAccent text-[#172019] font-bold text-xs hover:bg-limeHover transition">
+            COBA LAGI
+        </button>
+    </div>
+
+    <!-- ======================================================================
+         JAVASCRIPT APPLICATION LOGIC
+         ====================================================================== -->
     <script type="module">
         import * as THREE from 'three';
         import { FontLoader } from 'three/addons/loaders/FontLoader.js';
@@ -68,54 +407,51 @@
         import { FilesetResolver, HandLandmarker } from "https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@0.10.0";
 
         /* ======================================================================
-         * CONSTANTS
+         * BISINDO DICTIONARY DATA (A - Z) WITH INSTRUCTIONS & METADATA
          * ==================================================================== */
-        // How long a hand shape must stay stable before it is "typed" (ms).
-        // Using wall-clock time (not frame count) keeps this consistent across
-        // devices with different display refresh rates.
-        const HOLD_DURATION_MS = 2000;
-        // Extra margin (in normalized landmark units) a fingertip must be farther
-        // from the wrist than its middle joint to count as "extended".
-        const EXTENSION_MARGIN = 0.02;
-        // Max thumb-index tip distance (normalized) to count as a pinch ("O").
-        const PINCH_DISTANCE_THRESHOLD = 0.06;
-        // Max distance between both index fingertips to count as the two-hand "A" shape.
-        const TWO_HAND_PROXIMITY_THRESHOLD = 0.15;
-
-        const HAND_LANDMARKER_MODEL_URL =
-            "https://storage.googleapis.com/mediapipe-models/hand_landmarker/hand_landmarker/float16/1/hand_landmarker.task";
-        const FONT_URL = 'https://unpkg.com/three@0.160.0/examples/fonts/gentilis_bold.typeface.json';
-        const TEXT_COLORS = [0xFF6347, 0x1E90FF, 0x32CD32, 0xFFD700, 0xFF69B4];
+        const BISINDO_DICT = [
+            { char: 'A', name: 'Huruf A', type: 'two-hand', vowel: true, desc: 'Dua tangan: ujung kedua jari telunjuk saling bersentuhan membentuk atap segitiga di depan dada.' },
+            { char: 'B', name: 'Huruf B', type: 'two-hand', vowel: false, desc: 'Dua tangan: telapak tangan kiri terbuka tegak, tangan kanan menyentuh bagian tengah telapak kiri.' },
+            { char: 'C', name: 'Huruf C', type: 'one-hand', vowel: false, desc: 'Satu tangan: ibu jari dan jari-jari lainnya melengkung membentuk siluet huruf C terbuka.' },
+            { char: 'D', name: 'Huruf D', type: 'one-hand', vowel: false, desc: 'Satu tangan: jari telunjuk tegak lurus ke atas, ibu jari dan jari tengah melingkar membentuk perut huruf D.' },
+            { char: 'E', name: 'Huruf E', type: 'one-hand', vowel: true, desc: 'Satu tangan: keempat jari ditekuk ke bawah melengkung rapat seperti mencengkeram.' },
+            { char: 'F', name: 'Huruf F', type: 'two-hand', vowel: false, desc: 'Dua tangan: satu telunjuk tegak, telunjuk tangan lainnya melintang horizontal di tengahnya.' },
+            { char: 'G', name: 'Huruf G', type: 'two-hand', vowel: false, desc: 'Dua tangan: satu tangan mengepal di atas, tangan lainnya terbuka menyangga dari bawah.' },
+            { char: 'H', name: 'Huruf H', type: 'one-hand', vowel: false, desc: 'Satu tangan: jari telunjuk dan tengah lurus berdampingan mengarah horizontal ke samping.' },
+            { char: 'I', name: 'Huruf I', type: 'one-hand', vowel: true, desc: 'Satu tangan: hanya jari kelingking yang tegak lurus ke atas, jari lainnya mengepal.' },
+            { char: 'J', name: 'Huruf J', type: 'one-hand', vowel: false, desc: 'Satu tangan: jari kelingking tegak lalu membuat gerakan melengkung membentuk kait huruf J.' },
+            { char: 'K', name: 'Huruf K', type: 'one-hand', vowel: false, desc: 'Satu tangan: jari telunjuk dan tengah lurus membentuk V dengan ibu jari tegak di antaranya.' },
+            { char: 'L', name: 'Huruf L', type: 'one-hand', vowel: false, desc: 'Satu tangan: jari telunjuk tegak ke atas dan ibu jari terbuka 90 derajat membentuk siku huruf L.' },
+            { char: 'M', name: 'Huruf M', type: 'two-hand', vowel: false, desc: 'Dua tangan: kedua tangan terbuka dengan jari-jari mengarah ke bawah menyerupai tiga kaki M.' },
+            { char: 'N', name: 'Huruf N', type: 'two-hand', vowel: false, desc: 'Dua tangan: dua jari (telunjuk & tengah) dari kedua tangan saling menyilang ke bawah.' },
+            { char: 'O', name: 'Huruf O', type: 'one-hand', vowel: true, desc: 'Satu tangan: ujung ibu jari dan telunjuk saling bersentuhan membentuk lingkaran huruf O.' },
+            { char: 'P', name: 'Huruf P', type: 'two-hand', vowel: false, desc: 'Dua tangan: satu telunjuk tegak lurus, tangan lainnya melengkung membentuk kepala huruf P.' },
+            { char: 'Q', name: 'Huruf Q', type: 'one-hand', vowel: false, desc: 'Satu tangan: ibu jari dan telunjuk mengarah ke bawah membentuk lingkaran kecil.' },
+            { char: 'R', name: 'Huruf R', type: 'one-hand', vowel: false, desc: 'Satu tangan: jari telunjuk dan jari tengah saling menyilang rapat (crossed fingers).' },
+            { char: 'S', name: 'Huruf S', type: 'one-hand', vowel: false, desc: 'Satu tangan: semua jari mengepal rapat dengan ibu jari melintang di depan jari-jari lain.' },
+            { char: 'T', name: 'Huruf T', type: 'two-hand', vowel: false, desc: 'Dua tangan: satu telunjuk tegak vertikal, telunjuk tangan lainnya horizontal tepat di atasnya.' },
+            { char: 'U', name: 'Huruf U', type: 'one-hand', vowel: true, desc: 'Satu tangan: jari telunjuk dan tengah lurus tegak ke atas rapat berdampingan.' },
+            { char: 'V', name: 'Huruf V', type: 'one-hand', vowel: false, desc: 'Satu tangan: jari telunjuk dan tengah lurus membuka membentuk huruf V (gestur peace).' },
+            { char: 'W', name: 'Huruf W', type: 'one-hand', vowel: false, desc: 'Satu tangan: tiga jari (telunjuk, tengah, manis) tegak lurus menyebar ke atas.' },
+            { char: 'X', name: 'Huruf X', type: 'two-hand', vowel: false, desc: 'Dua tangan: kedua jari telunjuk disilangkan di depan dada membentuk tanda silang X.' },
+            { char: 'Y', name: 'Huruf Y', type: 'one-hand', vowel: false, desc: 'Satu tangan: ibu jari dan kelingking direntangkan keluar, tiga jari tengah menekuk (shaka).' },
+            { char: 'Z', name: 'Huruf Z', type: 'one-hand', vowel: false, desc: 'Satu tangan: jari telunjuk lurus membuat lintasan zig-zag membentuk huruf Z di udara.' }
+        ];
 
         /* ======================================================================
-         * DOM CACHE
+         * SVG GESTURE GENERATOR (Generates visual hand hints for each letter)
          * ==================================================================== */
-        const dom = {};
-        function cacheDom() {
-            Object.assign(dom, {
-                homeScreen: document.getElementById('home-screen'),
-                arScreen: document.getElementById('ar-screen'),
-                btnStart: document.getElementById('btn-start'),
-                btnBack: document.getElementById('btn-back'),
-                btnClear: document.getElementById('btn-clear'),
-                btnSpeak: document.getElementById('btn-speak'),
-                btnRetry: document.getElementById('btn-retry'),
-                wordDisplay: document.getElementById('word-display'),
-                lockProgress: document.getElementById('lock-progress'),
-                loadingOverlay: document.getElementById('loading-overlay'),
-                loadingText: document.getElementById('loading-text'),
-                errorOverlay: document.getElementById('error-overlay'),
-                errorMessage: document.getElementById('error-message'),
-                resBubble: document.getElementById('res-bubble'),
-                bigChar: document.getElementById('big-char'),
-                helperText: document.getElementById('helper-text'),
-                video: document.getElementById('webcam'),
-                canvas: document.getElementById('output_canvas'),
-            });
+        function getGestureSvg(char) {
+            // Simplified, aesthetic vector illustrations of hand signs
+            return `
+            <svg viewBox="0 0 64 64" class="size-10 sm:size-12 drop-shadow-sm" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <circle cx="32" cy="32" r="30" fill="#18231B" stroke="#d7ff69" stroke-width="1.5" stroke-dasharray="2 2"/>
+                <text x="32" y="38" text-anchor="middle" font-family="'Manrope', sans-serif" font-weight="800" font-size="20" fill="#d7ff69">${char}</text>
+            </svg>`;
         }
 
         /* ======================================================================
-         * MUTABLE STATE
+         * APPLICATION STATE
          * ==================================================================== */
         const State = {
             handLandmarker: null,
@@ -129,123 +465,388 @@
             mediaStream: null,
             animationFrameId: null,
             lastFrameTime: 0,
+            facingMode: "user",
 
-            isModelReady: false,   // AI model + 3D scene initialized (expensive, done once)
+            isModelReady: false,
             isCameraRunning: false,
 
             constructedWord: "",
             lastDetected: "",
             holdElapsedMs: 0,
+            holdDurationMs: 2000,
+
+            enable3DText: true,
+            enableTTS: true
         };
 
+        const HAND_LANDMARKER_MODEL_URL = "https://storage.googleapis.com/mediapipe-models/hand_landmarker/hand_landmarker/float16/1/hand_landmarker.task";
+        const FONT_URL = 'https://unpkg.com/three@0.160.0/examples/fonts/gentilis_bold.typeface.json';
+        const TEXT_COLORS = [0xd7ff69, 0x4ade80, 0x38bdf8, 0xfacc15, 0xf472b6, 0xa78bfa];
+
         /* ======================================================================
-         * SPEECH
+         * DOM ELEMENTS
          * ==================================================================== */
-        function initAudio() {
-            const s = window.speechSynthesis;
-            s.speak(new SpeechSynthesisUtterance(""));
+        const dom = {};
+        function cacheDom() {
+            Object.assign(dom, {
+                homeScreen: document.getElementById('home-screen'),
+                arScreen: document.getElementById('ar-screen'),
+                btnStart: document.getElementById('btn-start'),
+                btnBack: document.getElementById('btn-back'),
+                btnHudHome: document.getElementById('btn-hud-home'),
+                btnGuideModal: document.getElementById('btn-guide-modal'),
+                btnOpenDictHome: document.getElementById('btn-open-dict-home'),
+                btnOpenDict: document.getElementById('btn-open-dict'),
+                btnDrawerSeeAll: document.getElementById('btn-drawer-see-all'),
+                dictModal: document.getElementById('dict-modal'),
+                btnCloseDict: document.getElementById('btn-close-dict'),
+                dictCardsGrid: document.getElementById('dict-cards-grid'),
+                quickCarousel: document.getElementById('quick-alphabet-carousel'),
+                wordChipsContainer: document.getElementById('word-chips-container'),
+                emptyWordPlaceholder: document.getElementById('empty-word-placeholder'),
+                btnClearChar: document.getElementById('btn-clear-char'),
+                btnClearAll: document.getElementById('btn-clear-all'),
+                btnSpeakWord: document.getElementById('btn-speak-word'),
+                btnSwitchCamera: document.getElementById('btn-switch-camera'),
+                btnToggleFullscreen: document.getElementById('btn-toggle-fullscreen'),
+                btnToggleTTS: document.getElementById('btn-toggle-tts'),
+                ttsIcon: document.getElementById('tts-icon'),
+                btnOpenSettings: document.getElementById('btn-open-settings'),
+                settingsModal: document.getElementById('settings-modal'),
+                btnCloseSettings: document.getElementById('btn-close-settings'),
+                inputHoldDuration: document.getElementById('input-hold-duration'),
+                labelHoldDuration: document.getElementById('label-hold-duration'),
+                toggle3DText: document.getElementById('toggle-3d-text'),
+                toggleTTSSpeech: document.getElementById('toggle-tts-speech'),
+                gaugeCircleProgress: document.getElementById('gauge-circle-progress'),
+                gaugePercentText: document.getElementById('gauge-percent-text'),
+                gaugeActionText: document.getElementById('gauge-action-text'),
+                arDetectedBadge: document.getElementById('ar-detected-badge'),
+                badgeLetterChar: document.getElementById('badge-letter-char'),
+                loadingOverlay: document.getElementById('loading-overlay'),
+                loadingTitle: document.getElementById('loading-title'),
+                loadingSubtitle: document.getElementById('loading-subtitle'),
+                errorOverlay: document.getElementById('error-overlay'),
+                errorMessageText: document.getElementById('error-message-text'),
+                btnRetryCamera: document.getElementById('btn-retry-camera'),
+                video: document.getElementById('webcam'),
+                canvas: document.getElementById('output_canvas')
+            });
         }
+
+        /* ======================================================================
+         * SPEECH SYNTHESIS (TTS)
+         * ==================================================================== */
         function speak(text) {
+            if (!State.enableTTS || !('speechSynthesis' in window)) return;
             window.speechSynthesis.cancel();
-            const u = new SpeechSynthesisUtterance(text);
-            u.lang = 'id-ID'; u.rate = 1.0; u.pitch = 1.2;
-            window.speechSynthesis.speak(u);
+            const utterance = new SpeechSynthesisUtterance(text);
+            utterance.lang = 'id-ID';
+            utterance.rate = 1.0;
+            utterance.pitch = 1.05;
+            window.speechSynthesis.speak(utterance);
         }
+
         function speakWord() {
-            speak(State.constructedWord || "Belum ada kata");
-        }
-        function clearWord() {
-            State.constructedWord = "";
-            updateWordUI();
-            speak("Hapus");
-        }
-        function updateWordUI() {
-            dom.wordDisplay.innerText = State.constructedWord || "_";
+            if (!State.constructedWord) {
+                speak("Belum ada kata yang terbentuk");
+                return;
+            }
+            speak(State.constructedWord);
         }
 
         /* ======================================================================
-         * HAND-SIGN DETECTION (BISINDO: A, K, U, E, I, O)
+         * WORD MANAGEMENT UI
          * ==================================================================== */
-        function getDist(lm, i, j) {
-            return Math.hypot(lm[i].x - lm[j].x, lm[i].y - lm[j].y);
-        }
-        function isExt(lm, tip, pip) {
-            const wrist = 0;
-            return getDist(lm, wrist, tip) > getDist(lm, wrist, pip) + EXTENSION_MARGIN;
-        }
-
-        function detectLetters(lm, lm2, isDualHand) {
-            const T = isExt(lm, 8, 6);   // Telunjuk
-            const M = isExt(lm, 12, 10); // Tengah
-            const R = isExt(lm, 16, 14); // Manis
-            const K = isExt(lm, 20, 18); // Kelingking
-            const J = isExt(lm, 4, 2);   // Jempol
-            const distO = getDist(lm, 4, 8);
-
-            // 1. A (2 Tangan, ujung telunjuk berdekatan)
-            if (isDualHand && lm2) {
-                if (Math.hypot(lm[8].x - lm2[8].x, lm[8].y - lm2[8].y) < TWO_HAND_PROXIMITY_THRESHOLD) return "A";
+        function renderWordChips() {
+            if (!State.constructedWord) {
+                dom.wordChipsContainer.innerHTML = '';
+                dom.wordChipsContainer.appendChild(dom.emptyWordPlaceholder);
+                return;
             }
 
-            // 2. K (Telunjuk + Tengah + Jempol Lurus) - Prioritas Tinggi
-            if (T && M && J && !R && !K) return "K";
+            dom.wordChipsContainer.innerHTML = '';
+            for (let i = 0; i < State.constructedWord.length; i++) {
+                const char = State.constructedWord[i];
+                const chip = document.createElement('span');
+                chip.className = "grid size-8 sm:size-9 shrink-0 place-items-center rounded-xl bg-[#18231b] border border-limeAccent/30 text-xs sm:text-sm font-bold text-limeAccent shadow-sm";
+                chip.innerText = char;
+                dom.wordChipsContainer.appendChild(chip);
+            }
+            dom.wordChipsContainer.scrollLeft = dom.wordChipsContainer.scrollWidth;
+        }
 
-            // 3. E (Telunjuk + Tengah + Manis Lurus)
-            if (T && M && R && !K) return "E";
+        function appendCharacter(char) {
+            State.constructedWord += char;
+            renderWordChips();
+            speak(char);
+        }
 
-            // 4. U (Telunjuk + Jempol Lurus)
-            if (T && J && !M && !R && !K) return "U";
+        function deleteLastCharacter() {
+            if (State.constructedWord.length > 0) {
+                State.constructedWord = State.constructedWord.slice(0, -1);
+                renderWordChips();
+                speak("Hapus");
+            }
+        }
 
-            // 5. I (Kelingking)
-            if (K && !T && !M && !R) return "I";
+        function clearAllCharacters() {
+            if (State.constructedWord.length > 0) {
+                State.constructedWord = "";
+                renderWordChips();
+                speak("Bersihkan");
+            }
+        }
 
-            // 6. O (Cubit ibu jari-telunjuk, jari tengah & manis tidak lurus untuk
-            //    mengurangi false-positive saat pinch tidak disengaja)
-            if (distO < PINCH_DISTANCE_THRESHOLD && !M && !R) return "O";
+        /* ======================================================================
+         * BISINDO RECOGNITION GEOMETRY & DETECTION ENGINE (A - Z)
+         * ==================================================================== */
+        function getDist(p1, p2) {
+            return Math.hypot(p1.x - p2.x, p1.y - p2.y);
+        }
+
+        function isExt(lm, tip, pip, margin = 0.02) {
+            const wrist = 0;
+            return getDist(lm[wrist], lm[tip]) > getDist(lm[wrist], lm[pip]) + margin;
+        }
+
+        function isCurved(lm, tip, pip) {
+            // Finger partially bent (not fully straight, not totally flat)
+            const wrist = 0;
+            const dTip = getDist(lm[wrist], lm[tip]);
+            const dPip = getDist(lm[wrist], lm[pip]);
+            return dTip >= dPip - 0.03 && dTip <= dPip + 0.03;
+        }
+
+        function detectBisindoAlphabet(lm1, lm2, isDualHand) {
+            // Finger status for primary hand (lm1)
+            const T = isExt(lm1, 8, 6);    // Telunjuk (Index)
+            const M = isExt(lm1, 12, 10);  // Tengah (Middle)
+            const R = isExt(lm1, 16, 14);  // Manis (Ring)
+            const K = isExt(lm1, 20, 18);  // Kelingking (Pinky)
+            const J = isExt(lm1, 4, 2);    // Jempol (Thumb)
+
+            const distO = getDist(lm1[4], lm1[8]);
+            const distTM = getDist(lm1[8], lm1[12]);
+            const distIndexWrist = getDist(lm1[0], lm1[8]);
+
+            /* ----------------------------------------------------
+             * 1. DETEKSI GESTUR DUA TANGAN (DUAL-HAND BISINDO)
+             * ---------------------------------------------------- */
+            if (isDualHand && lm2) {
+                const T2 = isExt(lm2, 8, 6);
+                const M2 = isExt(lm2, 12, 10);
+                const R2 = isExt(lm2, 16, 14);
+                const K2 = isExt(lm2, 20, 18);
+
+                const distTipsIndex = getDist(lm1[8], lm2[8]);
+                const distIndexPip = getDist(lm1[8], lm2[6]);
+                const distTouchPalm = getDist(lm2[8], lm1[9]);
+
+                // A: Dua ujung telunjuk saling bersentuhan di atas membentuk segitiga
+                if (T && T2 && distTipsIndex < 0.13 && !M && !M2) {
+                    return "A";
+                }
+
+                // X: Dua jari telunjuk disilangkan membentuk tanda silang X
+                if (T && T2 && (distIndexPip < 0.11 || getDist(lm1[7], lm2[7]) < 0.10) && !M && !M2) {
+                    return "X";
+                }
+
+                // T: Satu telunjuk tegak, telunjuk tangan lainnya mendatar di atasnya
+                const isVertical1 = Math.abs(lm1[8].y - lm1[5].y) > Math.abs(lm1[8].x - lm1[5].x);
+                const isHorizontal2 = Math.abs(lm2[8].x - lm2[5].x) > Math.abs(lm2[8].y - lm2[5].y);
+                if (T && T2 && distTipsIndex < 0.12 && ((isVertical1 && isHorizontal2) || (!isVertical1 && !isHorizontal2))) {
+                    return "T";
+                }
+
+                // B: Satu tangan terbuka tegak, tangan kedua menyentuh telapak tangan pertama
+                const isHand1Open = T && M && R && K;
+                if (isHand1Open && distTouchPalm < 0.16) {
+                    return "B";
+                }
+
+                // F: Telunjuk tegak/ke bawah, telunjuk kedua horizontal di tengah telunjuk 1
+                if (T && T2 && getDist(lm2[8], lm1[6]) < 0.12 && !M) {
+                    return "F";
+                }
+
+                // G: Satu tangan mengepal, tangan kedua menopang di bawah pergelangan tangan
+                const isHand1Fist = !T && !M && !R && !K;
+                if (isHand1Fist && getDist(lm2[9], lm1[0]) < 0.18) {
+                    return "G";
+                }
+
+                // M (Dua Tangan): Kedua tangan dengan jari mengarah ke bawah
+                if (!T && !T2 && lm1[8].y > lm1[5].y && lm2[8].y > lm2[5].y && getDist(lm1[9], lm2[9]) < 0.22) {
+                    return "M";
+                }
+
+                // N (Dua Tangan): Jari telunjuk dan tengah kedua tangan menyilang ke bawah
+                if (T && T2 && lm1[8].y > lm1[6].y && lm2[8].y > lm2[6].y && distTipsIndex < 0.14) {
+                    return "N";
+                }
+
+                // P (Dua Tangan): Satu telunjuk tegak, tangan kedua melengkung di bagian atas telunjuk 1
+                if (T && distTipsIndex < 0.14 && (distO < 0.10 || getDist(lm2[4], lm1[8]) < 0.14)) {
+                    return "P";
+                }
+
+                // S (Dua Tangan): Kedua tangan saling mengait melengkung di depan dada
+                if (distTipsIndex < 0.15 && getDist(lm1[4], lm2[4]) < 0.15 && !T && !T2) {
+                    return "S";
+                }
+            }
+
+            /* ----------------------------------------------------
+             * 2. DETEKSI GESTUR SATU TANGAN (SINGLE-HAND BISINDO)
+             * ---------------------------------------------------- */
+
+            // Y: Jempol & Kelingking terbuka lebar, tiga jari tengah menekuk (shaka)
+            if (J && K && !T && !M && !R) {
+                return "Y";
+            }
+
+            // L: Telunjuk tegak ke atas, Jempol membuka 90 derajat siku-siku
+            if (T && J && !M && !R && !K && getDist(lm1[4], lm1[8]) > 0.14) {
+                return "L";
+            }
+
+            // I: Hanya jari kelingking tegak lurus ke atas
+            if (K && !T && !M && !R && !J) {
+                return "I";
+            }
+
+            // O: Ujung jempol dan telunjuk bertemu rapat membentuk lingkaran
+            if (distO < 0.055 && !M && !R) {
+                return "O";
+            }
+
+            // C: Ibu jari dan telunjuk melengkung membentuk huruf C
+            if (distO >= 0.07 && distO <= 0.20 && isCurved(lm1, 8, 6) && isCurved(lm1, 12, 10) && !K) {
+                return "C";
+            }
+
+            // D: Telunjuk lurus tegak, jempol dan jari tengah/manis bertemu membentuk lingkaran
+            if (T && !M && !R && !K && getDist(lm1[4], lm1[12]) < 0.08) {
+                return "D";
+            }
+
+            // R: Telunjuk dan tengah saling menyilang rapat
+            if (T && M && !R && !K && distTM < 0.038) {
+                return "R";
+            }
+
+            // U: Telunjuk dan jari tengah tegak lurus rapat sejajar
+            if (T && M && !R && !K && distTM <= 0.055) {
+                return "U";
+            }
+
+            // V: Telunjuk dan jari tengah tegak lurus membuka lebar (peace)
+            if (T && M && !R && !K && distTM > 0.055) {
+                return "V";
+            }
+
+            // W: Tiga jari (telunjuk, tengah, manis) tegak lurus menyebar
+            if (T && M && R && !K && !J) {
+                return "W";
+            }
+
+            // K (Satu Tangan): Telunjuk, tengah, dan jempol tegak lurus menyebar
+            if (T && M && J && !R && !K) {
+                return "K";
+            }
+
+            // H: Telunjuk dan tengah mengarah horizontal ke samping
+            const isHorizontal = Math.abs(lm1[8].x - lm1[5].x) > Math.abs(lm1[8].y - lm1[5].y);
+            if (T && M && !R && !K && isHorizontal) {
+                return "H";
+            }
+
+            // E: Jari-jari menekuk melengkung rapat (claw / fist-like)
+            if (isCurved(lm1, 8, 6) && isCurved(lm1, 12, 10) && isCurved(lm1, 16, 14) && distO > 0.08) {
+                return "E";
+            }
+
+            // S: Tangan mengepal rapat (fist)
+            if (!T && !M && !R && !K && !J) {
+                return "S";
+            }
+
+            // Q: Telunjuk dan jempol mengarah ke bawah
+            if (lm1[8].y > lm1[6].y && lm1[4].y > lm1[2].y && !M && !R && !K) {
+                return "Q";
+            }
+
+            // Z: Telunjuk lurus miring / horizontal
+            if (T && !M && !R && !K && isHorizontal) {
+                return "Z";
+            }
 
             return "";
         }
 
         /* ======================================================================
-         * HOLD-TO-TYPE SYSTEM
+         * HOLD-TO-TYPE SYSTEM & UI PROGRESS
          * ==================================================================== */
-        function handleTyping(char, deltaTimeMs) {
+        function handleHoldToType(char, deltaTimeMs) {
             if (char !== "" && char === State.lastDetected) {
                 State.holdElapsedMs += deltaTimeMs;
-                const progress = Math.min((State.holdElapsedMs / HOLD_DURATION_MS) * 100, 100);
-                dom.lockProgress.style.width = progress + "%";
+                const progressRatio = Math.min(State.holdElapsedMs / State.holdDurationMs, 1.0);
+                const progressPercent = Math.round(progressRatio * 100);
 
-                if (State.holdElapsedMs >= HOLD_DURATION_MS) {
-                    // Huruf terkunci - tambahkan ke kata dan reset supaya tidak
-                    // langsung terkunci lagi di frame berikutnya.
-                    State.constructedWord += char;
-                    updateWordUI();
-                    speak(char);
+                // Update SVG Circular Gauge (Circumference = 2 * PI * 61 ≈ 383.27)
+                const dashoffset = 383 - (383 * progressRatio);
+                dom.gaugeCircleProgress.style.strokeDashoffset = dashoffset;
+                dom.gaugePercentText.innerText = `${progressPercent}%`;
+                dom.gaugeActionText.innerText = `Menahan '${char}'`;
 
-                    dom.lockProgress.style.background = "#FFD700";
-                    setTimeout(() => dom.lockProgress.style.background = "#32CD32", 200);
+                if (State.holdElapsedMs >= State.holdDurationMs) {
+                    // Huruf terkunci! Tambahkan ke kata
+                    appendCharacter(char);
+
+                    // Flash visual feedback
+                    dom.gaugeCircleProgress.style.stroke = "#4ade80";
+                    dom.arDetectedBadge.style.transform = "scale(1.25)";
+                    setTimeout(() => {
+                        dom.gaugeCircleProgress.style.stroke = "#d7ff69";
+                        dom.arDetectedBadge.style.transform = "scale(1)";
+                    }, 250);
 
                     State.holdElapsedMs = 0;
                     State.lastDetected = "";
                 }
             } else {
                 State.holdElapsedMs = 0;
-                dom.lockProgress.style.width = "0%";
+                dom.gaugeCircleProgress.style.strokeDashoffset = 383;
+                dom.gaugePercentText.innerText = "0%";
+                dom.gaugeActionText.innerText = "Tahan 2 Detik";
                 State.lastDetected = char;
             }
         }
 
         /* ======================================================================
-         * 3D SCENE
+         * THREE.JS 3D AR SCENE
          * ==================================================================== */
-        const textMaterial = new THREE.MeshPhysicalMaterial({ color: 0xFFA500, metalness: 0.1, roughness: 0.2, clearcoat: 1.0 });
+        const textMaterial = new THREE.MeshPhysicalMaterial({
+            color: 0xd7ff69,
+            metalness: 0.15,
+            roughness: 0.25,
+            clearcoat: 1.0,
+            clearcoatRoughness: 0.1
+        });
 
-        function buildScene() {
+        function build3DScene() {
             State.scene = new THREE.Scene();
-            State.scene.add(new THREE.AmbientLight(0xffffff, 0.9));
-            const dirLight = new THREE.DirectionalLight(0xffd700, 0.5);
-            dirLight.position.set(5, 10, 7);
+            State.scene.add(new THREE.AmbientLight(0xffffff, 1.1));
+            
+            const dirLight = new THREE.DirectionalLight(0xd7ff69, 0.7);
+            dirLight.position.set(5, 10, 8);
             State.scene.add(dirLight);
+
+            const pointLight = new THREE.PointLight(0xffffff, 0.5);
+            pointLight.position.set(-5, -5, 5);
+            State.scene.add(pointLight);
 
             State.camera = new THREE.PerspectiveCamera(50, window.innerWidth / window.innerHeight, 0.1, 100);
             State.camera.position.z = 15;
@@ -262,64 +863,81 @@
             State.textMesh = null;
         }
 
-        function updateDisplay(char, handPos) {
+        function update3DDisplay(char, handPos) {
+            // Update 2D Floating AR Badge
+            dom.badgeLetterChar.innerText = char || "?";
+            if (char) {
+                dom.arDetectedBadge.classList.add("border-limeAccent");
+            } else {
+                dom.arDetectedBadge.classList.remove("border-limeAccent");
+            }
+
+            if (!State.enable3DText) {
+                disposeTextMesh();
+                return;
+            }
+
+            // Create or update Three.js 3D Mesh
             if (char !== State.currentLetter && char !== "") {
                 disposeTextMesh();
 
                 const geometry = new TextGeometry(char, {
-                    font: State.loadedFont, size: 2.5, height: 0.5,
-                    curveSegments: 10, bevelEnabled: true, bevelThickness: 0.1, bevelSize: 0.05
+                    font: State.loadedFont,
+                    size: 2.2,
+                    height: 0.45,
+                    curveSegments: 8,
+                    bevelEnabled: true,
+                    bevelThickness: 0.08,
+                    bevelSize: 0.04
                 });
                 geometry.center();
+
                 textMaterial.color.setHex(TEXT_COLORS[Math.floor(Math.random() * TEXT_COLORS.length)]);
                 State.textMesh = new THREE.Mesh(geometry, textMaterial);
                 State.scene.add(State.textMesh);
-
-                dom.resBubble.style.transform = "translateX(-50%) scale(1.3)";
-                setTimeout(() => dom.resBubble.style.transform = "translateX(-50%) scale(1)", 200);
             }
+
             if (char === "") {
                 disposeTextMesh();
             }
             State.currentLetter = char;
 
             if (State.textMesh) {
-                const targetVec = new THREE.Vector3((handPos.x - 0.5) * 15, -(handPos.y - 0.5) * 10 + 2, 0);
-                State.textMesh.position.lerp(targetVec, 0.1);
-                State.textMesh.rotation.y += 0.02;
+                const targetVec = new THREE.Vector3((handPos.x - 0.5) * 16, -(handPos.y - 0.5) * 11 + 2, 0);
+                State.textMesh.position.lerp(targetVec, 0.12);
+                State.textMesh.rotation.y += 0.025;
             }
-
-            dom.bigChar.innerText = char || "?";
-            dom.helperText.innerText = char ? "Tahan untuk Ketik..." : "Cari Huruf...";
         }
 
         /* ======================================================================
-         * AR LIFECYCLE (model load is expensive & done once; camera can be
-         * stopped/started repeatedly without reloading the model)
+         * AR LIFECYCLE & MODEL INITIALIZATION
          * ==================================================================== */
-        function showLoading(text) {
-            dom.errorOverlay.style.display = 'none';
-            dom.loadingText.innerText = text;
-            dom.loadingOverlay.style.display = 'flex';
+        function showLoading(title, subtitle) {
+            dom.errorOverlay.classList.add('hidden');
+            dom.loadingTitle.innerText = title;
+            dom.loadingSubtitle.innerText = subtitle;
+            dom.loadingOverlay.classList.remove('hidden');
         }
+
         function hideLoading() {
-            dom.loadingOverlay.style.display = 'none';
+            dom.loadingOverlay.classList.add('hidden');
         }
-        function showError(message, retryAction) {
-            dom.loadingOverlay.style.display = 'none';
-            dom.errorMessage.innerText = message;
-            dom.errorOverlay.style.display = 'flex';
-            dom.btnRetry.onclick = () => {
-                dom.errorOverlay.style.display = 'none';
+
+        function showError(msg, retryAction) {
+            dom.loadingOverlay.classList.add('hidden');
+            dom.errorMessageText.innerText = msg;
+            dom.errorOverlay.classList.remove('hidden');
+            dom.btnRetryCamera.onclick = () => {
+                dom.errorOverlay.classList.add('hidden');
                 retryAction();
             };
         }
 
         async function ensureModelReady() {
             if (State.isModelReady) return true;
-            showLoading("Memuat model AI...");
+            showLoading("Menyiapkan AI Vision...", "Mengunduh model MediaPipe Hand Landmarker...");
             try {
-                buildScene();
+                build3DScene();
 
                 const fontPromise = new Promise((resolve, reject) => {
                     new FontLoader().load(FONT_URL, resolve, undefined, reject);
@@ -333,49 +951,53 @@
 
                 State.handLandmarker = await HandLandmarker.createFromOptions(vision, {
                     baseOptions: { modelAssetPath: HAND_LANDMARKER_MODEL_URL, delegate: "GPU" },
-                    runningMode: "VIDEO", numHands: 2,
-                    minHandDetectionConfidence: 0.6, minHandPresenceConfidence: 0.6, minTrackingConfidence: 0.6
+                    runningMode: "VIDEO",
+                    numHands: 2,
+                    minHandDetectionConfidence: 0.6,
+                    minHandPresenceConfidence: 0.6,
+                    minTrackingConfidence: 0.6
                 });
 
                 State.isModelReady = true;
                 return true;
             } catch (err) {
                 console.error("Gagal memuat model AI:", err);
-                showError(
-                    "Gagal memuat model AI. Periksa koneksi internet Anda lalu coba lagi.",
-                    () => startApp()
-                );
+                showError("Gagal mengunduh modul MediaPipe. Periksa koneksi internet Anda lalu coba lagi.", () => startApp());
                 return false;
             }
         }
 
-        function cameraErrorMessage(err) {
-            if (err && (err.name === "NotAllowedError" || err.name === "PermissionDeniedError")) {
-                return "Izin kamera ditolak. Aktifkan izin kamera untuk browser ini, lalu coba lagi.";
-            }
-            if (err && (err.name === "NotFoundError" || err.name === "DevicesNotFoundError")) {
-                return "Kamera tidak ditemukan pada perangkat ini.";
-            }
-            return "Tidak dapat mengakses kamera. Coba lagi.";
-        }
-
         async function startCamera() {
-            showLoading("Mengakses kamera...");
+            showLoading("Mengakses Kamera...", "Harap berikan izin kamera pada browser Anda...");
             try {
-                State.mediaStream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: "user" } });
+                if (State.mediaStream) {
+                    State.mediaStream.getTracks().forEach(track => track.stop());
+                }
+
+                State.mediaStream = await navigator.mediaDevices.getUserMedia({
+                    video: {
+                        facingMode: State.facingMode,
+                        width: { ideal: 1920 },
+                        height: { ideal: 1080 }
+                    },
+                    audio: false
+                });
+
+                dom.video.srcObject = State.mediaStream;
+                dom.video.addEventListener("loadeddata", () => {
+                    hideLoading();
+                    State.isCameraRunning = true;
+                    State.lastFrameTime = performance.now();
+                    loop();
+                }, { once: true });
+
             } catch (err) {
                 console.error("Gagal mengakses kamera:", err);
-                showError(cameraErrorMessage(err), () => startCamera());
-                return;
+                const msg = err.name === "NotAllowedError" 
+                    ? "Izin akses kamera ditolak. Buka pengaturan browser Anda dan izinkan kamera untuk situs ini."
+                    : "Kamera tidak ditemukan atau sedang digunakan oleh aplikasi lain.";
+                showError(msg, () => startCamera());
             }
-
-            dom.video.srcObject = State.mediaStream;
-            dom.video.addEventListener("loadeddata", () => {
-                hideLoading();
-                State.isCameraRunning = true;
-                State.lastFrameTime = performance.now();
-                loop();
-            }, { once: true });
         }
 
         function stopCamera() {
@@ -392,13 +1014,15 @@
         }
 
         /* ======================================================================
-         * MAIN LOOP
+         * MAIN APPLICATION RENDER LOOP
          * ==================================================================== */
         function loop() {
             if (!State.isCameraRunning) return;
 
-            const width = window.innerWidth, height = window.innerHeight;
-            if (dom.canvas.width !== width) {
+            const width = dom.video.clientWidth || window.innerWidth;
+            const height = dom.video.clientHeight || window.innerHeight;
+
+            if (dom.canvas.width !== width || dom.canvas.height !== height) {
                 State.renderer.setSize(width, height);
                 State.camera.aspect = width / height;
                 State.camera.updateProjectionMatrix();
@@ -414,16 +1038,16 @@
                 let handPos = { x: 0.5, y: 0.5 };
 
                 if (results.landmarks.length > 0) {
-                    const lm = results.landmarks[0];
+                    const lm1 = results.landmarks[0];
                     const lm2 = results.landmarks.length > 1 ? results.landmarks[1] : null;
                     const isDualHand = results.landmarks.length > 1;
 
-                    handPos = lm[9];
-                    detected = detectLetters(lm, lm2, isDualHand);
+                    handPos = lm1[9];
+                    detected = detectBisindoAlphabet(lm1, lm2, isDualHand);
                 }
 
-                handleTyping(detected, deltaTimeMs);
-                updateDisplay(detected, handPos);
+                handleHoldToType(detected, deltaTimeMs);
+                update3DDisplay(detected, handPos);
             }
 
             State.renderer.render(State.scene, State.camera);
@@ -431,13 +1055,71 @@
         }
 
         /* ======================================================================
-         * NAVIGATION / UI WIRING
+         * DICTIONARY & QUICK CAROUSEL POPULATION
+         * ==================================================================== */
+        function populateQuickCarousel() {
+            dom.quickCarousel.innerHTML = '';
+            BISINDO_DICT.forEach((item, index) => {
+                const card = document.createElement('button');
+                card.type = 'button';
+                card.className = "relative flex h-[100px] w-[84px] shrink-0 snap-start flex-col items-center justify-between p-2 rounded-[20px] border border-[#e0e4df] bg-white hover:border-limeAccent transition active:scale-95 shadow-sm";
+                card.innerHTML = `
+                    <div class="mt-0.5">${getGestureSvg(item.char)}</div>
+                    <span class="grid size-6 place-items-center rounded-lg bg-[#18231b] text-limeAccent font-black text-xs">
+                        ${item.char}
+                    </span>
+                `;
+                card.onclick = () => {
+                    appendCharacter(item.char);
+                };
+                dom.quickCarousel.appendChild(card);
+            });
+        }
+
+        function populateDictionaryModal(filter = 'all') {
+            dom.dictCardsGrid.innerHTML = '';
+            const filtered = BISINDO_DICT.filter(item => {
+                if (filter === 'vowel') return item.vowel;
+                if (filter === 'one-hand') return item.type === 'one-hand';
+                if (filter === 'two-hand') return item.type === 'two-hand';
+                return true;
+            });
+
+            filtered.forEach(item => {
+                const card = document.createElement('div');
+                card.className = "flex items-start gap-3 p-3.5 rounded-2xl bg-white/5 border border-white/10 hover:border-limeAccent/40 transition";
+                card.innerHTML = `
+                    <div class="size-12 rounded-xl bg-[#18231b] border border-limeAccent/30 flex items-center justify-center text-limeAccent font-black text-xl shrink-0">
+                        ${item.char}
+                    </div>
+                    <div class="flex-1 min-w-0">
+                        <div class="flex items-center gap-2 mb-1">
+                            <h4 class="text-sm font-bold text-white">${item.name}</h4>
+                            <span class="text-[9px] font-bold px-2 py-0.5 rounded-full ${item.type === 'two-hand' ? 'bg-blue-500/20 text-blue-300' : 'bg-emerald-500/20 text-emerald-300'}">
+                                ${item.type === 'two-hand' ? '2 Tangan' : '1 Tangan'}
+                            </span>
+                        </div>
+                        <p class="text-xs text-gray-300 leading-relaxed">${item.desc}</p>
+                        <button type="button" class="mt-2 text-[11px] font-bold text-limeAccent hover:underline flex items-center gap-1">
+                            <span>Ketik huruf ini</span> &rarr;
+                        </button>
+                    </div>
+                `;
+                card.querySelector('button').onclick = () => {
+                    appendCharacter(item.char);
+                    dom.dictModal.classList.add('hidden');
+                };
+                dom.dictCardsGrid.appendChild(card);
+            });
+        }
+
+        /* ======================================================================
+         * UI NAVIGATION & EVENT LISTENERS
          * ==================================================================== */
         async function startApp() {
-            initAudio();
             dom.homeScreen.style.transform = "translateY(-100%)";
-            dom.arScreen.style.display = 'block';
-            speak("Ayo tulis kata A KU");
+            dom.arScreen.classList.remove('hidden');
+            speak("Kamera aktif. Selamat datang di WebAR BISINDO.");
 
             const ready = await ensureModelReady();
             if (ready) await startCamera();
@@ -446,15 +1128,105 @@
         function backToHome() {
             dom.homeScreen.style.transform = "translateY(0%)";
             stopCamera();
-            setTimeout(() => dom.arScreen.style.display = 'none', 500);
+            setTimeout(() => dom.arScreen.classList.add('hidden'), 500);
+        }
+
+        function switchCameraFacing() {
+            State.facingMode = State.facingMode === "user" ? "environment" : "user";
+            startCamera();
+        }
+
+        function toggleFullscreen() {
+            if (!document.fullscreenElement) {
+                document.documentElement.requestFullscreen().catch(() => {});
+            } else {
+                document.exitFullscreen().catch(() => {});
+            }
         }
 
         function initUI() {
             cacheDom();
-            dom.btnStart.addEventListener('click', startApp);
-            dom.btnBack.addEventListener('click', backToHome);
-            dom.btnClear.addEventListener('click', clearWord);
-            dom.btnSpeak.addEventListener('click', speakWord);
+            populateQuickCarousel();
+            populateDictionaryModal();
+
+            // Screen navigation
+            dom.btnStart.onclick = startApp;
+            dom.btnBack.onclick = backToHome;
+            dom.btnHudHome.onclick = backToHome;
+
+            // Word actions
+            dom.btnClearChar.onclick = deleteLastCharacter;
+            dom.btnClearAll.onclick = clearAllCharacters;
+            dom.btnSpeakWord.onclick = speakWord;
+
+            // Camera controls
+            dom.btnSwitchCamera.onclick = switchCameraFacing;
+            dom.btnToggleFullscreen.onclick = toggleFullscreen;
+
+            // Dictionary modals
+            const openDict = () => {
+                populateDictionaryModal('all');
+                dom.dictModal.classList.remove('hidden');
+            };
+            dom.btnOpenDictHome.onclick = openDict;
+            dom.btnGuideModal.onclick = openDict;
+            dom.btnOpenDict.onclick = openDict;
+            dom.btnDrawerSeeAll.onclick = openDict;
+            dom.btnCloseDict.onclick = () => dom.dictModal.classList.add('hidden');
+
+            // Dictionary filter buttons
+            document.querySelectorAll('.dict-filter-btn').forEach(btn => {
+                btn.onclick = (e) => {
+                    document.querySelectorAll('.dict-filter-btn').forEach(b => {
+                        b.className = "dict-filter-btn px-3.5 py-1.5 rounded-full text-xs font-bold bg-white/10 text-white hover:bg-white/20";
+                    });
+                    btn.className = "dict-filter-btn px-3.5 py-1.5 rounded-full text-xs font-bold bg-limeAccent text-[#172019]";
+                    populateDictionaryModal(btn.dataset.filter);
+                };
+            });
+
+            // Settings modal
+            dom.btnOpenSettings.onclick = () => dom.settingsModal.classList.remove('hidden');
+            dom.btnCloseSettings.onclick = () => dom.settingsModal.classList.add('hidden');
+            dom.inputHoldDuration.oninput = (e) => {
+                State.holdDurationMs = parseFloat(e.target.value) * 1000;
+                dom.labelHoldDuration.innerText = `${e.target.value}s`;
+            };
+            dom.toggle3DText.onchange = (e) => {
+                State.enable3DText = e.target.checked;
+                if (!State.enable3DText) disposeTextMesh();
+            };
+            dom.toggleTTSSpeech.onchange = (e) => {
+                State.enableTTS = e.target.checked;
+            };
+
+            // Global Audio Toggle in HUD
+            dom.btnToggleTTS.onclick = () => {
+                State.enableTTS = !State.enableTTS;
+                dom.btnToggleTTS.classList.toggle('active', State.enableTTS);
+                dom.ttsIcon.className = State.enableTTS ? "fas fa-volume-high text-sm text-limeAccent" : "fas fa-volume-xmark text-sm text-gray-400";
+            };
+
+            // Keyboard Shortcuts
+            window.addEventListener('keydown', (e) => {
+                if (e.key === 'Backspace') deleteLastCharacter();
+                if (e.key === ' ') { e.preventDefault(); speakWord(); }
+                if (e.key === 'Escape') {
+                    dom.dictModal.classList.add('hidden');
+                    dom.settingsModal.classList.add('hidden');
+                }
+            });
+
+            // Window resize handler
+            window.addEventListener('resize', () => {
+                if (State.renderer && State.camera) {
+                    const width = dom.video.clientWidth || window.innerWidth;
+                    const height = dom.video.clientHeight || window.innerHeight;
+                    State.renderer.setSize(width, height);
+                    State.camera.aspect = width / height;
+                    State.camera.updateProjectionMatrix();
+                }
+            });
         }
 
         document.addEventListener('DOMContentLoaded', initUI);
