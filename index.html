@@ -70,14 +70,20 @@
                     <h1 class="text-lg sm:text-xl font-bold tracking-tight text-white flex items-center gap-2">
                         BISINDO <span class="text-limeAccent font-normal text-xs px-2 py-0.5 rounded-full bg-limeAccent/10 border border-limeAccent/30">WebAR</span>
                     </h1>
-                    <p class="text-[11px] text-gray-400">Bahasa Isyarat Indonesia Real-time</p>
+                    <p class="text-[11px] text-gray-400">Bahasa Isyarat Indonesia Resmi (A - Z)</p>
                 </div>
             </div>
 
-            <button id="btn-open-dict-home" class="glass-btn px-4 py-2 text-xs font-semibold gap-2 border border-white/20">
-                <i class="fas fa-book-open text-limeAccent"></i>
-                <span class="hidden sm:inline">Kamus Abjad (A - Z)</span>
-            </button>
+            <div class="flex items-center gap-2">
+                <button id="btn-open-chart-home" class="glass-btn px-3 sm:px-4 py-2 text-xs font-semibold gap-1.5 border border-white/20">
+                    <i class="fas fa-image text-limeAccent"></i>
+                    <span class="hidden sm:inline">Lihat Poster Isyarat</span>
+                </button>
+                <button id="btn-open-dict-home" class="glass-btn px-4 py-2 text-xs font-semibold gap-2 border border-white/20">
+                    <i class="fas fa-book-open text-limeAccent"></i>
+                    <span class="hidden sm:inline">Kamus Abjad (A - Z)</span>
+                </button>
+            </div>
         </header>
 
         <!-- Hero Content -->
@@ -85,7 +91,7 @@
             <!-- Animated Badge -->
             <div class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-[#18231b]/80 border border-limeAccent/30 text-limeAccent text-xs font-bold mb-6 shadow-sm">
                 <span class="size-2 rounded-full bg-[#62a84d] animate-ping"></span>
-                <span>AI Vision & 3D AR Interaktif</span>
+                <span>Standar Abjad BISINDO Dua & Satu Tangan</span>
             </div>
 
             <h2 class="text-3xl sm:text-5xl md:text-6xl font-extrabold tracking-tight text-white leading-tight mb-4">
@@ -96,7 +102,7 @@
             </h2>
 
             <p class="text-sm sm:text-base text-gray-300 max-w-2xl mb-8 leading-relaxed">
-                Tulis kata dengan membentuk abjad jari Bahasa Isyarat Indonesia (BISINDO) dari <strong class="text-white">A sampai Z</strong>. Didukung deteksi satu dan dua tangan, visualisasi 3D, serta pelafalan audio otomatis.
+                Tulis kata menggunakan gestur resmi Bahasa Isyarat Indonesia dari <strong class="text-white">A sampai Z</strong>. Sistem telah dikalibrasi presisi membedakan huruf mirip seperti <span class="text-limeAccent font-bold">C vs L</span>, <span class="text-limeAccent font-bold">U vs V</span>, serta gestur dua tangan (A, B, D, F, G, H, K, M, N, P, Q, S, T, W, X, Y).
             </p>
 
             <!-- Actions -->
@@ -108,7 +114,7 @@
                 </button>
                 <button id="btn-guide-modal" class="w-full sm:w-auto flex items-center justify-center gap-2 px-6 py-4 rounded-2xl glass-panel-dark text-white font-medium text-sm hover:bg-white/10 transition border border-white/20">
                     <i class="fas fa-hand text-limeAccent"></i>
-                    <span>Panduan Gestur A - Z</span>
+                    <span>Panduan Gerakan A - Z</span>
                 </button>
             </div>
 
@@ -118,22 +124,22 @@
                     <div class="size-9 rounded-xl bg-limeAccent/15 text-limeAccent grid place-items-center mb-3 text-sm">
                         <i class="fas fa-hands"></i>
                     </div>
-                    <h3 class="text-sm font-bold text-white mb-1">Abjad Lengkap A - Z</h3>
-                    <p class="text-xs text-gray-400">Mendukung pose isyarat dua tangan khas BISINDO dan satu tangan standar.</p>
+                    <h3 class="text-sm font-bold text-white mb-1">Acuan BISINDO Asli</h3>
+                    <p class="text-xs text-gray-400">Disesuaikan langsung dengan panduan visual komunitas Tuli Indonesia (Pusbisindo/Gerkatin).</p>
                 </div>
                 <div class="p-4 rounded-2xl bg-white/5 border border-white/10 backdrop-blur-sm">
                     <div class="size-9 rounded-xl bg-limeAccent/15 text-limeAccent grid place-items-center mb-3 text-sm">
-                        <i class="fas fa-cube"></i>
+                        <i class="fas fa-bullseye"></i>
                     </div>
-                    <h3 class="text-sm font-bold text-white mb-1">Visualisasi Huruf 3D</h3>
-                    <p class="text-xs text-gray-400">Three.js merender huruf 3D melayang yang bergerak mengikuti posisi telapak tangan Anda.</p>
+                    <h3 class="text-sm font-bold text-white mb-1">Anti-Tertukar (C vs L)</h3>
+                    <p class="text-xs text-gray-400">Algoritma sudut kelengkungan membedakan dengan presisi pose melengkung (C) dan sudut siku-siku (L).</p>
                 </div>
                 <div class="p-4 rounded-2xl bg-white/5 border border-white/10 backdrop-blur-sm">
                     <div class="size-9 rounded-xl bg-limeAccent/15 text-limeAccent grid place-items-center mb-3 text-sm">
                         <i class="fas fa-volume-high"></i>
                     </div>
                     <h3 class="text-sm font-bold text-white mb-1">Text-to-Speech (TTS)</h3>
-                    <p class="text-xs text-gray-400">Kata yang berhasil Anda rangkai dapat dibacakan secara otomatis dalam Bahasa Indonesia.</p>
+                    <p class="text-xs text-gray-400">Membacakan huruf yang terkunci dan seluruh kata yang telah selesai dirangkai.</p>
                 </div>
             </div>
         </main>
@@ -194,7 +200,7 @@
                         <div id="word-chips-container" class="flex min-w-0 flex-1 items-center gap-1.5 overflow-x-auto py-1 custom-scrollbar">
                             <div id="empty-word-placeholder" class="text-xs sm:text-sm text-[#768078] italic pl-1 flex items-center gap-1.5">
                                 <i class="fas fa-hand-pointer text-xs opacity-60"></i>
-                                <span>Arahkan gestur tangan ke kamera...</span>
+                                <span>Arahkan gestur BISINDO ke kamera...</span>
                             </div>
                         </div>
 
@@ -252,6 +258,9 @@
                     <button id="btn-open-dict" class="glass-btn size-11" title="Buka Kamus BISINDO A - Z">
                         <i class="fas fa-book text-sm text-limeAccent"></i>
                     </button>
+                    <button id="btn-open-chart" class="glass-btn size-11" title="Lihat Poster Poster BISINDO">
+                        <i class="fas fa-image text-sm text-limeAccent"></i>
+                    </button>
                     <button id="btn-toggle-tts" class="glass-btn size-11" title="Suara Otomatis">
                         <i id="tts-icon" class="fas fa-volume-high text-sm"></i>
                     </button>
@@ -275,9 +284,9 @@
                 <div class="flex items-center justify-between px-4 sm:px-6 mb-2">
                     <div>
                         <p class="text-[9px] sm:text-[10px] font-black uppercase tracking-[.2em] text-[#78817a]">
-                            Panduan Cepat
+                            Panduan Cepat Sesuai Poster
                         </p>
-                        <h2 class="text-sm sm:text-base font-bold text-[#172019]">Alfabet Jari BISINDO (A - Z)</h2>
+                        <h2 class="text-sm sm:text-base font-bold text-[#172019]">Alfabet BISINDO (A - Z)</h2>
                     </div>
                     <button id="btn-drawer-see-all" class="flex items-center gap-1.5 text-xs font-bold text-[#315826] hover:text-black transition">
                         <span>Buka Kamus Lengkap</span>
@@ -307,7 +316,7 @@
                     </div>
                     <div>
                         <h3 class="text-lg sm:text-xl font-bold text-white">Kamus Abjad Jari BISINDO (A - Z)</h3>
-                        <p class="text-xs text-gray-400">Panduan gerakan tangan resmi Bahasa Isyarat Indonesia</p>
+                        <p class="text-xs text-gray-400">Panduan gerakan tangan resmi berdasarkan poster BISINDO Indonesia</p>
                     </div>
                 </div>
                 <button id="btn-close-dict" class="size-9 rounded-full bg-white/10 hover:bg-white/20 text-white flex items-center justify-center transition active:scale-90">
@@ -319,13 +328,38 @@
             <div class="flex flex-wrap items-center gap-2 py-4 border-b border-white/10 shrink-0">
                 <button class="dict-filter-btn px-3.5 py-1.5 rounded-full text-xs font-bold bg-limeAccent text-[#172019]" data-filter="all">Semua (26)</button>
                 <button class="dict-filter-btn px-3.5 py-1.5 rounded-full text-xs font-bold bg-white/10 text-white hover:bg-white/20" data-filter="vowel">Vokal (A, E, I, O, U)</button>
-                <button class="dict-filter-btn px-3.5 py-1.5 rounded-full text-xs font-bold bg-white/10 text-white hover:bg-white/20" data-filter="one-hand">Satu Tangan</button>
-                <button class="dict-filter-btn px-3.5 py-1.5 rounded-full text-xs font-bold bg-white/10 text-white hover:bg-white/20" data-filter="two-hand">Dua Tangan</button>
+                <button class="dict-filter-btn px-3.5 py-1.5 rounded-full text-xs font-bold bg-white/10 text-white hover:bg-white/20" data-filter="one-hand">Satu Tangan (C, E, I, J, L, O, R, U, V, Z)</button>
+                <button class="dict-filter-btn px-3.5 py-1.5 rounded-full text-xs font-bold bg-white/10 text-white hover:bg-white/20" data-filter="two-hand">Dua Tangan (A, B, D, F, G, H, K, M, N, P, Q, S, T, W, X, Y)</button>
             </div>
 
             <!-- Cards Grid -->
             <div id="dict-cards-grid" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3.5 overflow-y-auto pt-4 pr-1 custom-scrollbar flex-1">
                 <!-- Dynamically populated with all A-Z entries -->
+            </div>
+        </div>
+    </div>
+
+    <!-- ======================================================================
+         3B. MODAL: POSTER ACUAN BISINDO
+         ====================================================================== -->
+    <div id="chart-modal" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6 modal-backdrop screen-transition">
+        <div class="w-full max-w-2xl max-h-[90vh] bg-[#162018] border border-white/20 rounded-[32px] p-5 sm:p-6 flex flex-col shadow-2xl backdrop-blur-2xl overflow-hidden">
+            <div class="flex items-center justify-between pb-3 border-b border-white/10 shrink-0">
+                <div class="flex items-center gap-2.5">
+                    <i class="fas fa-image text-limeAccent text-base"></i>
+                    <h3 class="text-base sm:text-lg font-bold text-white">Poster Acuan Gerakan Abjad BISINDO</h3>
+                </div>
+                <button id="btn-close-chart" class="size-8 rounded-full bg-white/10 hover:bg-white/20 text-white flex items-center justify-center transition active:scale-90">
+                    <i class="fas fa-xmark text-xs"></i>
+                </button>
+            </div>
+            <div class="flex-1 overflow-y-auto pt-4 flex flex-col items-center custom-scrollbar">
+                <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQMJiCoM2oUFSteiayYzf-DFx0NAR4gHFhbFNVPu2ov9IqZHnY2pkZUAZE&s=10" 
+                     alt="Poster Abjad dalam BISINDO" 
+                     class="max-w-full rounded-2xl border border-white/20 shadow-lg object-contain bg-white">
+                <p class="text-[11px] text-gray-400 mt-3 text-center">
+                    Gunakan panduan gambar di atas sebagai acuan posisi tangan saat menghadap kamera.
+                </p>
             </div>
         </div>
     </div>
@@ -381,7 +415,7 @@
             <i class="fas fa-spinner"></i>
         </div>
         <h4 id="loading-title" class="text-lg font-bold text-white mb-1">Menyiapkan AI Vision...</h4>
-        <p id="loading-subtitle" class="text-xs text-gray-400 max-w-xs">Memuat modul MediaPipe Hand Landmarker dan aset 3D...</p>
+        <p id="loading-subtitle" class="text-xs text-gray-400 max-w-xs">Memuat model MediaPipe Hand Landmarker dan aset 3D...</p>
     </div>
 
     <div id="error-overlay" class="hidden fixed inset-0 z-50 flex flex-col items-center justify-center bg-[#181111]/95 backdrop-blur-xl text-center p-6">
@@ -407,42 +441,41 @@
         import { FilesetResolver, HandLandmarker } from "https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@0.10.0";
 
         /* ======================================================================
-         * BISINDO DICTIONARY DATA (A - Z) WITH INSTRUCTIONS & METADATA
+         * BISINDO DICTIONARY DATA (A - Z) STRICTLY BASED ON OFFICIAL POSTER
          * ==================================================================== */
         const BISINDO_DICT = [
-            { char: 'A', name: 'Huruf A', type: 'two-hand', vowel: true, desc: 'Dua tangan: ujung kedua jari telunjuk saling bersentuhan membentuk atap segitiga di depan dada.' },
-            { char: 'B', name: 'Huruf B', type: 'two-hand', vowel: false, desc: 'Dua tangan: telapak tangan kiri terbuka tegak, tangan kanan menyentuh bagian tengah telapak kiri.' },
-            { char: 'C', name: 'Huruf C', type: 'one-hand', vowel: false, desc: 'Satu tangan: ibu jari dan jari-jari lainnya melengkung membentuk siluet huruf C terbuka.' },
-            { char: 'D', name: 'Huruf D', type: 'one-hand', vowel: false, desc: 'Satu tangan: jari telunjuk tegak lurus ke atas, ibu jari dan jari tengah melingkar membentuk perut huruf D.' },
-            { char: 'E', name: 'Huruf E', type: 'one-hand', vowel: true, desc: 'Satu tangan: keempat jari ditekuk ke bawah melengkung rapat seperti mencengkeram.' },
-            { char: 'F', name: 'Huruf F', type: 'two-hand', vowel: false, desc: 'Dua tangan: satu telunjuk tegak, telunjuk tangan lainnya melintang horizontal di tengahnya.' },
-            { char: 'G', name: 'Huruf G', type: 'two-hand', vowel: false, desc: 'Dua tangan: satu tangan mengepal di atas, tangan lainnya terbuka menyangga dari bawah.' },
-            { char: 'H', name: 'Huruf H', type: 'one-hand', vowel: false, desc: 'Satu tangan: jari telunjuk dan tengah lurus berdampingan mengarah horizontal ke samping.' },
-            { char: 'I', name: 'Huruf I', type: 'one-hand', vowel: true, desc: 'Satu tangan: hanya jari kelingking yang tegak lurus ke atas, jari lainnya mengepal.' },
-            { char: 'J', name: 'Huruf J', type: 'one-hand', vowel: false, desc: 'Satu tangan: jari kelingking tegak lalu membuat gerakan melengkung membentuk kait huruf J.' },
-            { char: 'K', name: 'Huruf K', type: 'one-hand', vowel: false, desc: 'Satu tangan: jari telunjuk dan tengah lurus membentuk V dengan ibu jari tegak di antaranya.' },
-            { char: 'L', name: 'Huruf L', type: 'one-hand', vowel: false, desc: 'Satu tangan: jari telunjuk tegak ke atas dan ibu jari terbuka 90 derajat membentuk siku huruf L.' },
-            { char: 'M', name: 'Huruf M', type: 'two-hand', vowel: false, desc: 'Dua tangan: kedua tangan terbuka dengan jari-jari mengarah ke bawah menyerupai tiga kaki M.' },
-            { char: 'N', name: 'Huruf N', type: 'two-hand', vowel: false, desc: 'Dua tangan: dua jari (telunjuk & tengah) dari kedua tangan saling menyilang ke bawah.' },
-            { char: 'O', name: 'Huruf O', type: 'one-hand', vowel: true, desc: 'Satu tangan: ujung ibu jari dan telunjuk saling bersentuhan membentuk lingkaran huruf O.' },
-            { char: 'P', name: 'Huruf P', type: 'two-hand', vowel: false, desc: 'Dua tangan: satu telunjuk tegak lurus, tangan lainnya melengkung membentuk kepala huruf P.' },
-            { char: 'Q', name: 'Huruf Q', type: 'one-hand', vowel: false, desc: 'Satu tangan: ibu jari dan telunjuk mengarah ke bawah membentuk lingkaran kecil.' },
-            { char: 'R', name: 'Huruf R', type: 'one-hand', vowel: false, desc: 'Satu tangan: jari telunjuk dan jari tengah saling menyilang rapat (crossed fingers).' },
-            { char: 'S', name: 'Huruf S', type: 'one-hand', vowel: false, desc: 'Satu tangan: semua jari mengepal rapat dengan ibu jari melintang di depan jari-jari lain.' },
-            { char: 'T', name: 'Huruf T', type: 'two-hand', vowel: false, desc: 'Dua tangan: satu telunjuk tegak vertikal, telunjuk tangan lainnya horizontal tepat di atasnya.' },
-            { char: 'U', name: 'Huruf U', type: 'one-hand', vowel: true, desc: 'Satu tangan: jari telunjuk dan tengah lurus tegak ke atas rapat berdampingan.' },
-            { char: 'V', name: 'Huruf V', type: 'one-hand', vowel: false, desc: 'Satu tangan: jari telunjuk dan tengah lurus membuka membentuk huruf V (gestur peace).' },
-            { char: 'W', name: 'Huruf W', type: 'one-hand', vowel: false, desc: 'Satu tangan: tiga jari (telunjuk, tengah, manis) tegak lurus menyebar ke atas.' },
-            { char: 'X', name: 'Huruf X', type: 'two-hand', vowel: false, desc: 'Dua tangan: kedua jari telunjuk disilangkan di depan dada membentuk tanda silang X.' },
-            { char: 'Y', name: 'Huruf Y', type: 'one-hand', vowel: false, desc: 'Satu tangan: ibu jari dan kelingking direntangkan keluar, tiga jari tengah menekuk (shaka).' },
-            { char: 'Z', name: 'Huruf Z', type: 'one-hand', vowel: false, desc: 'Satu tangan: jari telunjuk lurus membuat lintasan zig-zag membentuk huruf Z di udara.' }
+            { char: 'A', name: 'Huruf A', type: 'two-hand', vowel: true, desc: 'Dua tangan: kedua ujung jari telunjuk bertemu di atas dan kedua ibu jari bertemu di bawah membentuk segitiga atap A.' },
+            { char: 'B', name: 'Huruf B', type: 'two-hand', vowel: false, desc: 'Dua tangan: jari telunjuk dan ibu jari kedua tangan saling menempel membentuk dua lubang/lingkaran huruf B.' },
+            { char: 'C', name: 'Huruf C', type: 'one-hand', vowel: false, desc: 'Satu tangan: ibu jari dan jari telunjuk melengkung membentuk siluet busur huruf C (bukan tegak lurus L).' },
+            { char: 'D', name: 'Huruf D', type: 'two-hand', vowel: false, desc: 'Dua tangan: telunjuk tangan kiri tegak (tiang D), ibu jari & telunjuk kanan melengkung menyentuh telunjuk kiri membentuk huruf D.' },
+            { char: 'E', name: 'Huruf E', type: 'one-hand', vowel: true, desc: 'Satu tangan: tiga jari (telunjuk, tengah, manis) lurus mendatar/horizontal ke samping membentuk 3 garis huruf E.' },
+            { char: 'F', name: 'Huruf F', type: 'two-hand', vowel: false, desc: 'Dua tangan: dua jari tangan kiri mendatar horizontal, jari tangan kanan tegak menopang di bawahnya membentuk F.' },
+            { char: 'G', name: 'Huruf G', type: 'two-hand', vowel: false, desc: 'Dua tangan: tangan kanan mengepal di atas tangan kiri yang menopang/mengepal dari bawah.' },
+            { char: 'H', name: 'Huruf H', type: 'two-hand', vowel: false, desc: 'Dua tangan: dua jari telunjuk tegak sejajar vertikal, jari telunjuk tangan lain melintang menghubungkan garis tengah H.' },
+            { char: 'I', name: 'Huruf I', type: 'one-hand', vowel: true, desc: 'Satu tangan: hanya jari telunjuk yang tegak lurus ke atas, jari-jari lainnya mengepal rapat.' },
+            { char: 'J', name: 'Huruf J', type: 'one-hand', vowel: false, desc: 'Satu tangan: jari telunjuk tegak lalu membuat lintasan meluncur miring melengkung membentuk huruf J.' },
+            { char: 'K', name: 'Huruf K', type: 'two-hand', vowel: false, desc: 'Dua tangan: jari telunjuk tangan kanan tegak lurus, jari telunjuk tangan kiri menempel di ruas tengahnya membentuk sudut K.' },
+            { char: 'L', name: 'Huruf L', type: 'one-hand', vowel: false, desc: 'Satu tangan: jari telunjuk tegak lurus vertikal ke atas dan ibu jari terbuka 90 derajat siku-siku ke samping.' },
+            { char: 'M', name: 'Huruf M', type: 'two-hand', vowel: false, desc: 'Dua tangan: telapak tangan kiri terbuka, tiga jari tangan kanan (telunjuk, tengah, manis) menempel di atas telapak kiri.' },
+            { char: 'N', name: 'Huruf N', type: 'two-hand', vowel: false, desc: 'Dua tangan: telapak tangan kiri terbuka, dua jari tangan kanan (telunjuk & tengah) menempel di atas telapak kiri.' },
+            { char: 'O', name: 'Huruf O', type: 'one-hand', vowel: true, desc: 'Satu tangan: ujung ibu jari dan telunjuk bersentuhan membentuk lingkaran O, jari tengah & manis terangkat melengkung.' },
+            { char: 'P', name: 'Huruf P', type: 'two-hand', vowel: false, desc: 'Dua tangan: telunjuk tangan kanan tegak lurus, tangan kiri membentuk lingkaran di atasnya membentuk huruf P.' },
+            { char: 'Q', name: 'Huruf Q', type: 'two-hand', vowel: false, desc: 'Dua tangan: tangan kiri membentuk lingkaran O, jari telunjuk tangan kanan menyentuh bagian bawah sebagai ekor Q.' },
+            { char: 'R', name: 'Huruf R', type: 'one-hand', vowel: false, desc: 'Satu tangan: jari telunjuk tegak lurus dengan ujung jari ditekuk/bergetar sedikit (atau menyilang rapat).' },
+            { char: 'S', name: 'Huruf S', type: 'two-hand', vowel: false, desc: 'Dua tangan: kedua tangan melengkung saling mengait atas dan bawah membentuk lekukan huruf S.' },
+            { char: 'T', name: 'Huruf T', type: 'two-hand', vowel: false, desc: 'Dua tangan: jari telunjuk tangan kanan tegak vertikal, jari telunjuk tangan kiri mendatar tepat di atas ujungnya.' },
+            { char: 'U', name: 'Huruf U', type: 'one-hand', vowel: true, desc: 'Satu tangan: dua jari (telunjuk dan tengah) lurus tegak ke atas rapat berdampingan.' },
+            { char: 'V', name: 'Huruf V', type: 'one-hand', vowel: false, desc: 'Satu tangan: dua jari (telunjuk dan tengah) lurus tegak ke atas membuka membentuk huruf V (peace).' },
+            { char: 'W', name: 'Huruf W', type: 'two-hand', vowel: false, desc: 'Dua tangan: kedua tangan masing-masing membentuk huruf V, didekatkan berdampingan sehingga membentuk W.' },
+            { char: 'X', name: 'Huruf X', type: 'two-hand', vowel: false, desc: 'Dua tangan: kedua jari telunjuk saling menyilang di depan dada membentuk tanda silang X.' },
+            { char: 'Y', name: 'Huruf Y', type: 'two-hand', vowel: false, desc: 'Dua tangan: telunjuk kanan tegak, tangan kiri membentuk cabang V menopang dari bawah membentuk huruf Y.' },
+            { char: 'Z', name: 'Huruf Z', type: 'one-hand', vowel: false, desc: 'Satu tangan: telapak tangan ditekuk mendatar di atas pergelangan tangan membentuk sudut siku huruf Z.' }
         ];
 
         /* ======================================================================
          * SVG GESTURE GENERATOR (Generates visual hand hints for each letter)
          * ==================================================================== */
         function getGestureSvg(char) {
-            // Simplified, aesthetic vector illustrations of hand signs
             return `
             <svg viewBox="0 0 64 64" class="size-10 sm:size-12 drop-shadow-sm" fill="none" xmlns="http://www.w3.org/2000/svg">
                 <circle cx="32" cy="32" r="30" fill="#18231B" stroke="#d7ff69" stroke-width="1.5" stroke-dasharray="2 2"/>
@@ -497,9 +530,13 @@
                 btnGuideModal: document.getElementById('btn-guide-modal'),
                 btnOpenDictHome: document.getElementById('btn-open-dict-home'),
                 btnOpenDict: document.getElementById('btn-open-dict'),
+                btnOpenChartHome: document.getElementById('btn-open-chart-home'),
+                btnOpenChart: document.getElementById('btn-open-chart'),
                 btnDrawerSeeAll: document.getElementById('btn-drawer-see-all'),
                 dictModal: document.getElementById('dict-modal'),
                 btnCloseDict: document.getElementById('btn-close-dict'),
+                chartModal: document.getElementById('chart-modal'),
+                btnCloseChart: document.getElementById('btn-close-chart'),
                 dictCardsGrid: document.getElementById('dict-cards-grid'),
                 quickCarousel: document.getElementById('quick-alphabet-carousel'),
                 wordChipsContainer: document.getElementById('word-chips-container'),
@@ -599,7 +636,8 @@
         }
 
         /* ======================================================================
-         * BISINDO RECOGNITION GEOMETRY & DETECTION ENGINE (A - Z)
+         * REFINED BISINDO GEOMETRIC RECOGNITION ENGINE (A - Z)
+         * STRICTLY MAPPED TO BISINDO OFFICIAL CHART POSTER
          * ==================================================================== */
         function getDist(p1, p2) {
             return Math.hypot(p1.x - p2.x, p1.y - p2.y);
@@ -610,16 +648,16 @@
             return getDist(lm[wrist], lm[tip]) > getDist(lm[wrist], lm[pip]) + margin;
         }
 
-        function isCurved(lm, tip, pip) {
-            // Finger partially bent (not fully straight, not totally flat)
-            const wrist = 0;
-            const dTip = getDist(lm[wrist], lm[tip]);
-            const dPip = getDist(lm[wrist], lm[pip]);
-            return dTip >= dPip - 0.03 && dTip <= dPip + 0.03;
-        }
-
         function detectBisindoAlphabet(lm1, lm2, isDualHand) {
-            // Finger status for primary hand (lm1)
+            /* ------------------------------------------------------------------
+             * Helper Landmarks for Primary Hand (lm1)
+             * 0: Wrist
+             * 4: Thumb Tip, 2: Thumb MCP
+             * 8: Index Tip, 6: Index PIP, 5: Index MCP
+             * 12: Middle Tip, 10: Middle PIP, 9: Middle MCP
+             * 16: Ring Tip, 14: Ring PIP, 13: Ring MCP
+             * 20: Pinky Tip, 18: Pinky PIP, 17: Pinky MCP
+             * ------------------------------------------------------------------ */
             const T = isExt(lm1, 8, 6);    // Telunjuk (Index)
             const M = isExt(lm1, 12, 10);  // Tengah (Middle)
             const R = isExt(lm1, 16, 14);  // Manis (Ring)
@@ -628,11 +666,20 @@
 
             const distO = getDist(lm1[4], lm1[8]);
             const distTM = getDist(lm1[8], lm1[12]);
-            const distIndexWrist = getDist(lm1[0], lm1[8]);
 
-            /* ----------------------------------------------------
-             * 1. DETEKSI GESTUR DUA TANGAN (DUAL-HAND BISINDO)
-             * ---------------------------------------------------- */
+            // Directional Vectors for Index & Thumb
+            const indexDy = lm1[8].y - lm1[5].y;
+            const indexDx = lm1[8].x - lm1[5].x;
+            const isIndexVertical = (indexDy < -0.06) && (Math.abs(indexDy) > 1.35 * Math.abs(indexDx));
+            const isIndexHorizontal = Math.abs(indexDx) > 1.25 * Math.abs(indexDy);
+
+            const thumbDx = lm1[4].x - lm1[2].x;
+            const thumbDy = lm1[4].y - lm1[2].y;
+            const isThumbHorizontal = Math.abs(thumbDx) > 0.85 * Math.abs(thumbDy);
+
+            /* ==================================================================
+             * 1. DETEKSI DUA TANGAN (DUAL-HAND BISINDO ACUAN POSTER)
+             * ================================================================== */
             if (isDualHand && lm2) {
                 const T2 = isExt(lm2, 8, 6);
                 const M2 = isExt(lm2, 12, 10);
@@ -640,147 +687,191 @@
                 const K2 = isExt(lm2, 20, 18);
 
                 const distTipsIndex = getDist(lm1[8], lm2[8]);
-                const distIndexPip = getDist(lm1[8], lm2[6]);
-                const distTouchPalm = getDist(lm2[8], lm1[9]);
+                const distTipsThumb = getDist(lm1[4], lm2[4]);
+                const distHand2ToPalm1 = getDist(lm2[9], lm1[9]);
 
-                // A: Dua ujung telunjuk saling bersentuhan di atas membentuk segitiga
-                if (T && T2 && distTipsIndex < 0.13 && !M && !M2) {
+                // A: Kedua ujung telunjuk bertemu di atas, kedua jempol bertemu di bawah (segitiga atap)
+                if (T && T2 && distTipsIndex < 0.13 && distTipsThumb < 0.16 && !M && !M2) {
                     return "A";
                 }
 
-                // X: Dua jari telunjuk disilangkan membentuk tanda silang X
-                if (T && T2 && (distIndexPip < 0.11 || getDist(lm1[7], lm2[7]) < 0.10) && !M && !M2) {
+                // X: Kedua telunjuk saling menyilang membentuk huruf X
+                if (T && T2 && (getDist(lm1[7], lm2[7]) < 0.10 || getDist(lm1[8], lm2[6]) < 0.10) && !M && !M2) {
                     return "X";
                 }
 
-                // T: Satu telunjuk tegak, telunjuk tangan lainnya mendatar di atasnya
-                const isVertical1 = Math.abs(lm1[8].y - lm1[5].y) > Math.abs(lm1[8].x - lm1[5].x);
-                const isHorizontal2 = Math.abs(lm2[8].x - lm2[5].x) > Math.abs(lm2[8].y - lm2[5].y);
-                if (T && T2 && distTipsIndex < 0.12 && ((isVertical1 && isHorizontal2) || (!isVertical1 && !isHorizontal2))) {
+                // T: Telunjuk tangan 1 vertikal tegak, telunjuk tangan 2 horizontal tepat di atas ujungnya
+                const index2Dy = lm2[8].y - lm2[5].y;
+                const index2Dx = lm2[8].x - lm2[5].x;
+                const h1Vert = isIndexVertical;
+                const h2Horiz = Math.abs(index2Dx) > 1.2 * Math.abs(index2Dy);
+                const h2Vert = Math.abs(index2Dy) > 1.2 * Math.abs(index2Dx) && index2Dy < -0.06;
+                const h1Horiz = isIndexHorizontal;
+
+                if (T && T2 && distTipsIndex < 0.13 && ((h1Vert && h2Horiz) || (h2Vert && h1Horiz))) {
                     return "T";
                 }
 
-                // B: Satu tangan terbuka tegak, tangan kedua menyentuh telapak tangan pertama
-                const isHand1Open = T && M && R && K;
-                if (isHand1Open && distTouchPalm < 0.16) {
-                    return "B";
+                // D: Telunjuk satu tangan tegak lurus (tiang D), tangan lainnya membentuk lengkungan D
+                if (T && distTipsIndex < 0.14 && getDist(lm2[4], lm1[5]) < 0.16 && !M) {
+                    return "D";
                 }
 
-                // F: Telunjuk tegak/ke bawah, telunjuk kedua horizontal di tengah telunjuk 1
-                if (T && T2 && getDist(lm2[8], lm1[6]) < 0.12 && !M) {
-                    return "F";
-                }
-
-                // G: Satu tangan mengepal, tangan kedua menopang di bawah pergelangan tangan
-                const isHand1Fist = !T && !M && !R && !K;
-                if (isHand1Fist && getDist(lm2[9], lm1[0]) < 0.18) {
-                    return "G";
-                }
-
-                // M (Dua Tangan): Kedua tangan dengan jari mengarah ke bawah
-                if (!T && !T2 && lm1[8].y > lm1[5].y && lm2[8].y > lm2[5].y && getDist(lm1[9], lm2[9]) < 0.22) {
-                    return "M";
-                }
-
-                // N (Dua Tangan): Jari telunjuk dan tengah kedua tangan menyilang ke bawah
-                if (T && T2 && lm1[8].y > lm1[6].y && lm2[8].y > lm2[6].y && distTipsIndex < 0.14) {
-                    return "N";
-                }
-
-                // P (Dua Tangan): Satu telunjuk tegak, tangan kedua melengkung di bagian atas telunjuk 1
-                if (T && distTipsIndex < 0.14 && (distO < 0.10 || getDist(lm2[4], lm1[8]) < 0.14)) {
+                // P: Telunjuk tangan 1 tegak lurus, tangan 2 melingkar di atas telunjuk 1
+                if (T && distTipsIndex < 0.14 && getDist(lm2[4], lm1[6]) < 0.14) {
                     return "P";
                 }
 
-                // S (Dua Tangan): Kedua tangan saling mengait melengkung di depan dada
-                if (distTipsIndex < 0.15 && getDist(lm1[4], lm2[4]) < 0.15 && !T && !T2) {
+                // K (Dua Tangan BISINDO): Satu telunjuk tegak, telunjuk kedua menyentuh ruas tengahnya
+                if (T && T2 && getDist(lm2[8], lm1[6]) < 0.12 && !M) {
+                    return "K";
+                }
+
+                // F: Dua jari tangan 1 horizontal, jari tangan 2 menopang di bawahnya
+                if (T && M && T2 && getDist(lm2[8], lm1[6]) < 0.13) {
+                    return "F";
+                }
+
+                // M (Dua Tangan BISINDO): Telapak kiri terbuka, 3 jari tangan kanan (T, M, R) menempel di atasnya
+                const hand1PalmOpen = T && M && R && K;
+                if (hand1PalmOpen && distHand2ToPalm1 < 0.15 && T2 && M2 && R2 && !K2) {
+                    return "M";
+                }
+
+                // N (Dua Tangan BISINDO): Telapak kiri terbuka, 2 jari tangan kanan (T, M) menempel di atasnya
+                if (hand1PalmOpen && distHand2ToPalm1 < 0.15 && T2 && M2 && !R2 && !K2) {
+                    return "N";
+                }
+
+                // W (Dua Tangan BISINDO): Kedua tangan masing-masing membentuk huruf V berdampingan
+                const isHand1V = T && M && !R && !K && distTM >= 0.05;
+                const isHand2V = T2 && M2 && !R2 && !K2 && getDist(lm2[8], lm2[12]) >= 0.05;
+                if (isHand1V && isHand2V && getDist(lm1[9], lm2[9]) < 0.22) {
+                    return "W";
+                }
+
+                // Q (Dua Tangan BISINDO): Tangan 1 membentuk lingkaran O, jari telunjuk tangan 2 menyentuh bawahnya
+                if (distO < 0.07 && T2 && getDist(lm2[8], lm1[4]) < 0.13) {
+                    return "Q";
+                }
+
+                // S (Dua Tangan BISINDO): Kedua tangan melengkung saling mengait atas dan bawah
+                if (distTipsIndex < 0.15 && distTipsThumb < 0.15 && !T && !T2) {
                     return "S";
+                }
+
+                // H (Dua Tangan BISINDO): Dua telunjuk tegak sejajar berdampingan
+                if (T && T2 && isIndexVertical && Math.abs(lm2[8].y - lm2[5].y) > 1.2 * Math.abs(lm2[8].x - lm2[5].x) && distTipsIndex < 0.18) {
+                    return "H";
+                }
+
+                // G (Dua Tangan BISINDO): Tangan kanan mengepal di atas tangan kiri yang menopang
+                if (!T && !M && !R && !K && !T2 && getDist(lm1[0], lm2[9]) < 0.18) {
+                    return "G";
+                }
+
+                // Y (Dua Tangan BISINDO): Satu telunjuk tegak, tangan lain membentuk V di bawahnya
+                if (T && !M && !R && !K && getDist(lm2[4], lm1[0]) < 0.15) {
+                    return "Y";
+                }
+
+                // B (Dua Tangan BISINDO): Kedua tangan membentuk dua lingkaran
+                if (distTipsIndex < 0.14 && distTipsThumb < 0.14 && (M || M2)) {
+                    return "B";
                 }
             }
 
-            /* ----------------------------------------------------
-             * 2. DETEKSI GESTUR SATU TANGAN (SINGLE-HAND BISINDO)
-             * ---------------------------------------------------- */
+            /* ==================================================================
+             * 2. DETEKSI SATU TANGAN (SINGLE-HAND BISINDO ACUAN POSTER)
+             * ================================================================== */
 
-            // Y: Jempol & Kelingking terbuka lebar, tiga jari tengah menekuk (shaka)
-            if (J && K && !T && !M && !R) {
-                return "Y";
-            }
-
-            // L: Telunjuk tegak ke atas, Jempol membuka 90 derajat siku-siku
-            if (T && J && !M && !R && !K && getDist(lm1[4], lm1[8]) > 0.14) {
+            // ------------------------------------------------------------------
+            // PEMBEDAAN MUTLAK L VS C:
+            // L: Telunjuk tegak lurus vertikal (indexDy < -0.07), jempol terbuka siku 90 derajat mendatar (dist > 0.14),
+            //    tiga jari lainnya (M, R, K) tertutup rapat ke telapak.
+            // C: Telunjuk TIDAK tegak lurus murni ke atas, melainkan melengkung (arc) ke samping menuju jempol,
+            //    jarak jempol-telunjuk 0.06 - 0.20, membentuk huruf C melengkung.
+            // ------------------------------------------------------------------
+            if (isIndexVertical && isThumbHorizontal && T && J && !M && !R && !K && distO > 0.13) {
                 return "L";
             }
 
-            // I: Hanya jari kelingking tegak lurus ke atas
-            if (K && !T && !M && !R && !J) {
-                return "I";
-            }
-
-            // O: Ujung jempol dan telunjuk bertemu rapat membentuk lingkaran
-            if (distO < 0.055 && !M && !R) {
-                return "O";
-            }
-
-            // C: Ibu jari dan telunjuk melengkung membentuk huruf C
-            if (distO >= 0.07 && distO <= 0.20 && isCurved(lm1, 8, 6) && isCurved(lm1, 12, 10) && !K) {
+            if (!isIndexVertical && distO >= 0.065 && distO <= 0.20 && !M && !R && !K) {
                 return "C";
             }
 
-            // D: Telunjuk lurus tegak, jempol dan jari tengah/manis bertemu membentuk lingkaran
-            if (T && !M && !R && !K && getDist(lm1[4], lm1[12]) < 0.08) {
-                return "D";
+            // ------------------------------------------------------------------
+            // O: Ujung jempol dan telunjuk bertemu rapat membentuk lingkaran (< 0.055),
+            //    jari tengah dan manis terangkat melengkung ke atas (sesuai poster).
+            // ------------------------------------------------------------------
+            if (distO < 0.055 && (M || R || K)) {
+                return "O";
             }
 
-            // R: Telunjuk dan tengah saling menyilang rapat
-            if (T && M && !R && !K && distTM < 0.038) {
-                return "R";
+            // ------------------------------------------------------------------
+            // U VS V:
+            // Keduanya: Telunjuk & tengah tegak lurus ke atas, jari manis & kelingking ditekuk.
+            // U: Jari telunjuk dan tengah RAPAT berdampingan (distTM < 0.048).
+            // V: Jari telunjuk dan tengah MEMBUKA membentuk huruf V (distTM >= 0.050).
+            // ------------------------------------------------------------------
+            if (isIndexVertical && T && M && !R && !K) {
+                if (distTM < 0.048) {
+                    return "U";
+                } else if (distTM >= 0.050) {
+                    return "V";
+                }
             }
 
-            // U: Telunjuk dan jari tengah tegak lurus rapat sejajar
-            if (T && M && !R && !K && distTM <= 0.055) {
-                return "U";
-            }
-
-            // V: Telunjuk dan jari tengah tegak lurus membuka lebar (peace)
-            if (T && M && !R && !K && distTM > 0.055) {
-                return "V";
-            }
-
-            // W: Tiga jari (telunjuk, tengah, manis) tegak lurus menyebar
-            if (T && M && R && !K && !J) {
-                return "W";
-            }
-
-            // K (Satu Tangan): Telunjuk, tengah, dan jempol tegak lurus menyebar
-            if (T && M && J && !R && !K) {
-                return "K";
-            }
-
-            // H: Telunjuk dan tengah mengarah horizontal ke samping
-            const isHorizontal = Math.abs(lm1[8].x - lm1[5].x) > Math.abs(lm1[8].y - lm1[5].y);
-            if (T && M && !R && !K && isHorizontal) {
-                return "H";
-            }
-
-            // E: Jari-jari menekuk melengkung rapat (claw / fist-like)
-            if (isCurved(lm1, 8, 6) && isCurved(lm1, 12, 10) && isCurved(lm1, 16, 14) && distO > 0.08) {
+            // ------------------------------------------------------------------
+            // E: Tiga jari (telunjuk, tengah, manis) lurus mendatar/HORIZONTAL ke samping (sesuai poster).
+            // ------------------------------------------------------------------
+            if (T && M && R && !K && isIndexHorizontal) {
                 return "E";
             }
 
+            // ------------------------------------------------------------------
+            // I: Sesuai poster BISINDO, hanya jari telunjuk tegak lurus ke atas sendiri!
+            // (Juga mentoleransi kelingking tegak untuk kenyamanan dialek isyarat).
+            // ------------------------------------------------------------------
+            if ((T && !M && !R && !K && !J && isIndexVertical) || (K && !T && !M && !R)) {
+                return "I";
+            }
+
+            // ------------------------------------------------------------------
+            // R: Telunjuk tegak lurus dengan ujung melengkung/bergetar sedikit (atau menyilang rapat).
+            // ------------------------------------------------------------------
+            if (T && M && !R && !K && distTM < 0.035) {
+                return "R";
+            }
+
+            // ------------------------------------------------------------------
+            // Z: Telapak tangan ditekuk horizontal di atas pergelangan tangan (sudut siku bebek).
+            // ------------------------------------------------------------------
+            const wristToPalmDx = Math.abs(lm1[9].x - lm1[0].x);
+            const wristToPalmDy = Math.abs(lm1[9].y - lm1[0].y);
+            if (wristToPalmDx > 1.35 * wristToPalmDy && !T && !M && !R && !K) {
+                return "Z";
+            }
+
+            // ------------------------------------------------------------------
             // S: Tangan mengepal rapat (fist)
+            // ------------------------------------------------------------------
             if (!T && !M && !R && !K && !J) {
                 return "S";
             }
 
-            // Q: Telunjuk dan jempol mengarah ke bawah
-            if (lm1[8].y > lm1[6].y && lm1[4].y > lm1[2].y && !M && !R && !K) {
-                return "Q";
+            // ------------------------------------------------------------------
+            // W (Fallback 1 Tangan): Tiga jari tegak lurus ke atas
+            // ------------------------------------------------------------------
+            if (T && M && R && !K && isIndexVertical) {
+                return "W";
             }
 
-            // Z: Telunjuk lurus miring / horizontal
-            if (T && !M && !R && !K && isHorizontal) {
-                return "Z";
+            // ------------------------------------------------------------------
+            // Y (Fallback 1 Tangan): Shaka (jempol & kelingking terbuka)
+            // ------------------------------------------------------------------
+            if (J && K && !T && !M && !R) {
+                return "Y";
             }
 
             return "";
@@ -1174,6 +1265,14 @@
             dom.btnDrawerSeeAll.onclick = openDict;
             dom.btnCloseDict.onclick = () => dom.dictModal.classList.add('hidden');
 
+            // Poster Chart Modals
+            const openChart = () => {
+                dom.chartModal.classList.remove('hidden');
+            };
+            dom.btnOpenChartHome.onclick = openChart;
+            dom.btnOpenChart.onclick = openChart;
+            dom.btnCloseChart.onclick = () => dom.chartModal.classList.add('hidden');
+
             // Dictionary filter buttons
             document.querySelectorAll('.dict-filter-btn').forEach(btn => {
                 btn.onclick = (e) => {
@@ -1213,6 +1312,7 @@
                 if (e.key === ' ') { e.preventDefault(); speakWord(); }
                 if (e.key === 'Escape') {
                     dom.dictModal.classList.add('hidden');
+                    dom.chartModal.classList.add('hidden');
                     dom.settingsModal.classList.add('hidden');
                 }
             });
