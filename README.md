@@ -52,7 +52,7 @@ Semua proses berjalan **100% di sisi klien (*client-side*)** tanpa memerlukan in
   </tr>
   <tr>
     <td><img src="docs/screenshots/webar-dictionary.png" alt="Kamus Panduan Gestur A-Z"><br><sub><b>Kamus Panduan</b> — Referensi visual langkah pembentukan gestur jari A s/d Z</sub></td>
-    <td><img src="docs/screenshots/webar-sentence.png" alt="Penyusun Kata dan Text to Speech"><br><sub><b>Penyusun Kalimat</b> — Akumulasi kata dari gestur dan pelafalan audio otomatis</sub></td>
+    <td><img src="docs/screenshots/webar-chart.png" alt="Penyusun Kata dan Text to Speech"><br><sub><b>Penyusun Kalimat</b> — Akumulasi kata dari gestur dan pelafalan audio otomatis</sub></td>
   </tr>
 </table>
 
